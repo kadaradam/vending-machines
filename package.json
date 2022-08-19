@@ -2,8 +2,7 @@
   "name": "vending-machines",
   "private": true,
   "workspaces": [
-    "backend",
-    "frontend"
+    "packages/*"
   ],
   "scripts": {
     "backend": "yarn workspace backend start",

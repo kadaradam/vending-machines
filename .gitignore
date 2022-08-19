@@ -10,7 +10,7 @@ yarn-error.log*
 
 # production
 build
-backend/dist
+dist
 
 # misc
 .DS_Store
