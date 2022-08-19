@@ -9,6 +9,7 @@ import {
 	Request,
 	UseGuards,
 } from '@nestjs/common';
+import { PublicForBuyer } from 'src/auth/public-for-buyer.metadata';
 import { SellerGuard } from 'src/auth/seller.guard';
 import { UserRequestType } from 'src/types';
 import { CreateProductDto, UpdateProductDto } from './dto';
@@ -19,8 +20,16 @@ import { ProductsService } from './products.service';
 export class ProductsController {
 	constructor(private readonly productsService: ProductsService) {}
 
+	// For buyer to browse from products
+	@PublicForBuyer()
+	@Get('/browse')
+	async get() {
+		return this.productsService.browseAll();
+	}
+
+	// CRUD
 	@Get()
-	async get(@Request() req: UserRequestType) {
+	async getPublicProducts(@Request() req: UserRequestType) {
 		return this.productsService.findAll(req.user);
 	}
 
