@@ -1,0 +1,7 @@
+{
+  "prettier.prettierPath": "node_modules/prettier/index.js",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  }
+}
