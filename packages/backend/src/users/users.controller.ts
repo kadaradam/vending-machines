@@ -8,9 +8,16 @@ import { UsersService } from './users.service';
 export class UsersController {
 	constructor(private readonly usersService: UsersService) {}
 
-	@Post('/deposit')
+	@Put('/deposit')
 	async deposit(req: UserRequestType, @Body() depositAmountDto: DepositAmountDto) {
+		// TODO: add check: only buyer
 		return this.usersService.depositAmount(req.user, depositAmountDto);
+	}
+
+	@Post('/reset')
+	async reset(req: UserRequestType) {
+		// TODO: add check: only buyer
+		return this.usersService.resetDeposit(req.user);
 	}
 
 	// CRUD

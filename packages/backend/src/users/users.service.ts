@@ -48,4 +48,8 @@ export class UsersService {
 			.findByIdAndUpdate(user._id, { $inc: { deposit: depositAmountDto.amount } })
 			.exec();
 	}
+
+	async resetDeposit(user: CleanUser) {
+		return this.userModel.findByIdAndUpdate(user._id, { deposit: 0 }).exec();
+	}
 }
