@@ -19,7 +19,11 @@ export class UsersService {
 			...createUserDto,
 		});
 
-		return createdUser.save();
+		const saveResult = await createdUser.save();
+
+		const { password: _, ...response } = saveResult.toObject<User>();
+
+		return response;
 	}
 
 	async findAll(): Promise<CleanUser[]> {
