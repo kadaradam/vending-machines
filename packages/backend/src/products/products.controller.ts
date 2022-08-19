@@ -22,13 +22,14 @@ export class ProductsController {
 
 	// For buyer to browse from products
 	@PublicForBuyer()
-	@Get('/browse')
+	@Get()
 	async get() {
 		return this.productsService.browseAll();
 	}
 
 	// CRUD
-	@Get()
+	// For sellers to list all their products
+	@Get('/my')
 	async getPublicProducts(@Request() req: UserRequestType) {
 		return this.productsService.findAll(req.user);
 	}

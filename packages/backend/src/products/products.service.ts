@@ -30,6 +30,10 @@ export class ProductsService {
 		return this.productModel.find({ sellerId: user._id }).exec();
 	}
 
+	async browseAll(): Promise<Product[]> {
+		return this.productModel.find().exec();
+	}
+
 	async findOne(user: CleanUser, id: string): Promise<Product> {
 		return this.productModel.findOne({ _id: id, sellerId: user._id });
 	}
