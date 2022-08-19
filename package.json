@@ -1,0 +1,12 @@
+{
+  "name": "vending-machines",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "engines": {
+    "node": "16.13.2",
+    "yarn": "1.22.18"
+  }
+}
