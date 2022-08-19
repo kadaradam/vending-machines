@@ -5,8 +5,16 @@
     "backend",
     "frontend"
   ],
+  "scripts": {
+    "backend": "yarn workspace backend start",
+    "frontend": "yarn workspace frontend start",
+    "start": "concurrently --kill-others-on-fail \"yarn backend\"  \"yarn frontend\""
+  },
   "engines": {
     "node": "16.13.2",
     "yarn": "1.22.18"
+  },
+  "dependencies": {
+    "concurrently": "^7.3.0"
   }
 }
