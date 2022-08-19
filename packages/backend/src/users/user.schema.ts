@@ -18,7 +18,7 @@ export class User {
 	password: string;
 
 	@Prop()
-	deposit: number;
+	deposit: number; // in cents
 
 	@Prop({ enum: Object.values(RolesEnum), default: RolesEnum.BUYER })
 	role: RolesEnum;

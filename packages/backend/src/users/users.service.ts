@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateUserDto, UpdateUserDto } from './dto';
+import { DepositAmountDto } from './dto/deposit-amount.dto';
 import { CleanUser, User, UserDocument } from './user.schema';
 
 @Injectable()
@@ -40,5 +41,11 @@ export class UsersService {
 
 	async delete(id: string): Promise<CleanUser> {
 		return this.userModel.findByIdAndDelete(id).exec();
+	}
+
+	async depositAmount(user: CleanUser, depositAmountDto: DepositAmountDto) {
+		return this.userModel
+			.findByIdAndUpdate(user._id, { $inc: { deposit: depositAmountDto.amount } })
+			.exec();
 	}
 }
