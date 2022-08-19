@@ -12,6 +12,7 @@ import { UsersModule } from './users/users.module';
 	imports: [
 		MongooseModule.forRootAsync({
 			useFactory: () => ({
+				// TODO: Read from ENV config
 				uri: 'mongodb://localhost/vending',
 			}),
 		}),
