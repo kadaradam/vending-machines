@@ -2,11 +2,15 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CleanUser } from 'src/users/user.schema';
-import { CreateProductDto, UpdateProductDto } from './dto';
+import { BuyProductDto, CreateProductDto, UpdateProductDto } from './dto';
 import { Product, ProductDocument } from './products.schema';
 @Injectable()
 export class ProductsService {
 	constructor(@InjectModel(Product.name) private productModel: Model<ProductDocument>) {}
+
+	async buyProducts(user: CleanUser, id: string, buyProductDto: BuyProductDto) {
+		return true;
+	}
 
 	async create(user: CleanUser, createProductDto: CreateProductDto): Promise<Product> {
 		const productExists = await this.productModel.findOne({

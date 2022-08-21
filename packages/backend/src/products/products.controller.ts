@@ -12,7 +12,7 @@ import {
 import { PublicForBuyer } from 'src/auth/public-for-buyer.metadata';
 import { SellerGuard } from 'src/auth/seller.guard';
 import { UserRequestType } from 'src/types';
-import { CreateProductDto, UpdateProductDto } from './dto';
+import { BuyProductDto, CreateProductDto, UpdateProductDto } from './dto';
 import { ProductsService } from './products.service';
 
 @UseGuards(SellerGuard)
@@ -23,8 +23,19 @@ export class ProductsController {
 	// For buyer to browse from products
 	@PublicForBuyer()
 	@Get()
-	async get() {
+	async getAllProducts() {
 		return this.productsService.browseAll();
+	}
+
+	// For buyer to buy products
+	@PublicForBuyer()
+	@Post(':id/buy')
+	async buyProducts(
+		@Request() req: UserRequestType,
+		@Param('id') id: string,
+		@Body() buyProductDto: BuyProductDto,
+	) {
+		return this.productsService.buyProducts(req.user, id, buyProductDto);
 	}
 
 	// CRUD
