@@ -1,1 +1,1 @@
-export * from './calculatePennyChanges';
+export * from './coin.utils';
