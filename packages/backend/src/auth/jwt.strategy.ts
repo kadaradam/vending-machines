@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { PassportStrategy } from '@nestjs/passport';
 import { Model } from 'mongoose';
@@ -7,12 +8,14 @@ import { CleanUser, User, UserDocument } from 'src/users/user.schema';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-	constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {
+	constructor(
+		@InjectModel(User.name) private userModel: Model<UserDocument>,
+		readonly configService: ConfigService,
+	) {
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			ignoreExpiration: false,
-			// TODO: add to env config
-			secretOrKey: '9Y!3q$80D2^T',
+			secretOrKey: configService.get<string>('JWT_SECRET'),
 		});
 	}
 

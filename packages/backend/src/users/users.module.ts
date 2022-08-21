@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
@@ -10,10 +11,13 @@ import { UsersService } from './users.service';
 
 @Module({
 	imports: [
-		JwtModule.register({
-			// TODO: add to env config
-			secret: '9Y!3q$80D2^T',
-			signOptions: { expiresIn: '7d' },
+		JwtModule.registerAsync({
+			imports: [ConfigModule],
+			inject: [ConfigService],
+			useFactory: (configService: ConfigService) => ({
+				secret: configService.get<string>('JWT_SECRET'),
+				signOptions: { expiresIn: '7d' },
+			}),
 		}),
 		MongooseModule.forFeatureAsync([
 			{
