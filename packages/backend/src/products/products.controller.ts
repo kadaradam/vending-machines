@@ -21,13 +21,6 @@ import { ProductsService } from './products.service';
 export class ProductsController {
 	constructor(private readonly productsService: ProductsService) {}
 
-	// For buyer to browse from products
-	@Roles(RolesEnum.BUYER)
-	@Get()
-	async getBuyerProducts() {
-		return this.productsService.browseAll();
-	}
-
 	// For buyer to buy products
 	@Roles(RolesEnum.BUYER)
 	@Post(':id/buy')
@@ -39,12 +32,19 @@ export class ProductsController {
 		return this.productsService.buyProducts(req.user, id, buyProductDto);
 	}
 
+	// For buyer to browse from products
+	@Roles(RolesEnum.BUYER)
+	@Get()
+	async getBuyerProducts() {
+		return this.productsService.listProductsForBuyer();
+	}
+
 	// CRUD
 	// For sellers to list all their products
 	@Roles(RolesEnum.SELLER)
 	@Get('/my')
 	async getSellerProducts(@Request() req: UserRequestType) {
-		return this.productsService.findAll(req.user);
+		return this.productsService.listProductsForSeller(req.user);
 	}
 
 	@Roles(RolesEnum.SELLER)

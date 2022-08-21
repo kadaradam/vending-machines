@@ -4,6 +4,9 @@ import { Model } from 'mongoose';
 import { CleanUser } from 'src/users/user.schema';
 import { BuyProductDto, CreateProductDto, UpdateProductDto } from './dto';
 import { Product, ProductDocument } from './products.schema';
+
+type ProductKeys = keyof Product;
+
 @Injectable()
 export class ProductsService {
 	constructor(@InjectModel(Product.name) private productModel: Model<ProductDocument>) {}
@@ -30,11 +33,11 @@ export class ProductsService {
 		return createdProduct.save();
 	}
 
-	async findAll(user: CleanUser): Promise<Product[]> {
+	async listProductsForSeller(user: CleanUser): Promise<Product[]> {
 		return this.productModel.find({ sellerId: user._id }).exec();
 	}
 
-	async browseAll(): Promise<Product[]> {
+	async listProductsForBuyer(): Promise<Product[]> {
 		return this.productModel.find().exec();
 	}
 
@@ -47,6 +50,18 @@ export class ProductsService {
 		id: string,
 		updateProductDto: UpdateProductDto,
 	): Promise<Product> {
+		// Class validator should catch not supported properties
+		// Extra validation in case of malfunctioning
+		const allowedPropsToUpdate: ProductKeys[] = ['amountAvailable'];
+
+		const isUpdateAllowed = Object.keys(updateProductDto).every((prop) =>
+			allowedPropsToUpdate.includes(prop as ProductKeys),
+		);
+
+		if (!isUpdateAllowed) {
+			throw new HttpException('Invalid properties to update', HttpStatus.METHOD_NOT_ALLOWED);
+		}
+
 		return this.productModel.findOneAndUpdate(
 			{ _id: id, sellerId: user._id },
 			updateProductDto,
