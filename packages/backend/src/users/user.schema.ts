@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
 import { CoinWalletSchemaType } from 'src/types';
+import { getEmptyWallet } from 'src/utils';
 
 export type UserDocument = User & Document;
 
@@ -18,7 +19,7 @@ export class User {
 	@Prop({ required: true, select: false })
 	password: string;
 
-	@Prop({ type: CoinWalletSchemaType, default: {} })
+	@Prop({ type: CoinWalletSchemaType, default: getEmptyWallet() })
 	deposit: CoinWalletSchemaType;
 
 	@Prop({ enum: Object.values(RolesEnum), default: RolesEnum.BUYER })
