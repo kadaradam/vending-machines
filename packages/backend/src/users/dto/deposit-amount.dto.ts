@@ -1,7 +1,10 @@
-import { IsIn, IsNumber } from 'class-validator';
+import { IsNotEmptyObject, IsObject } from 'class-validator';
+import { IsCoinWallet } from 'src/dtos';
+import { CoinWalletType } from 'src/types';
 
 export class DepositAmountDto {
-	@IsNumber()
-	@IsIn([5, 10, 20, 50, 100])
-	amount: number;
+	@IsNotEmptyObject()
+	@IsObject()
+	@IsCoinWallet()
+	coins: CoinWalletType;
 }

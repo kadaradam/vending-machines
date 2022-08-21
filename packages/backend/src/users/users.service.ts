@@ -37,8 +37,9 @@ export class UsersService {
 	}
 
 	async depositAmount(user: CleanUser, depositAmountDto: DepositAmountDto) {
+		// TODO: Add proper sum
 		return this.userModel
-			.findByIdAndUpdate(user._id, { $inc: { deposit: depositAmountDto.amount } })
+			.findByIdAndUpdate(user._id, { $inc: { deposit: depositAmountDto.coins } })
 			.exec();
 	}
 
