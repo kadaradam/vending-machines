@@ -9,26 +9,27 @@ import {
 	Request,
 	UseGuards,
 } from '@nestjs/common';
-import { PublicForBuyer } from 'src/auth/public-for-buyer.metadata';
-import { SellerGuard } from 'src/auth/seller.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { RolesGuard } from 'src/auth/roles.guard';
 import { UserRequestType } from 'src/types';
+import { RolesEnum } from 'src/users/user.schema';
 import { BuyProductDto, CreateProductDto, UpdateProductDto } from './dto';
 import { ProductsService } from './products.service';
 
-@UseGuards(SellerGuard)
+@UseGuards(RolesGuard)
 @Controller('products')
 export class ProductsController {
 	constructor(private readonly productsService: ProductsService) {}
 
 	// For buyer to browse from products
-	@PublicForBuyer()
+	@Roles(RolesEnum.BUYER)
 	@Get()
-	async getAllProducts() {
+	async getBuyerProducts() {
 		return this.productsService.browseAll();
 	}
 
 	// For buyer to buy products
-	@PublicForBuyer()
+	@Roles(RolesEnum.BUYER)
 	@Post(':id/buy')
 	async buyProducts(
 		@Request() req: UserRequestType,
@@ -40,21 +41,25 @@ export class ProductsController {
 
 	// CRUD
 	// For sellers to list all their products
+	@Roles(RolesEnum.SELLER)
 	@Get('/my')
-	async getPublicProducts(@Request() req: UserRequestType) {
+	async getSellerProducts(@Request() req: UserRequestType) {
 		return this.productsService.findAll(req.user);
 	}
 
+	@Roles(RolesEnum.SELLER)
 	@Get(':id')
 	async find(@Request() req: UserRequestType, @Param('id') id: string) {
 		return this.productsService.findOne(req.user, id);
 	}
 
+	@Roles(RolesEnum.SELLER)
 	@Post()
 	async create(@Request() req: UserRequestType, @Body() createProductDto: CreateProductDto) {
 		return this.productsService.create(req.user, createProductDto);
 	}
 
+	@Roles(RolesEnum.SELLER)
 	@Put(':id')
 	async update(
 		@Request() req: UserRequestType,
@@ -64,6 +69,7 @@ export class ProductsController {
 		return this.productsService.update(req.user, id, updateProductDto);
 	}
 
+	@Roles(RolesEnum.SELLER)
 	@Delete(':id')
 	async delete(@Request() req: UserRequestType, @Param('id') id: string) {
 		return this.productsService.delete(req.user, id);
