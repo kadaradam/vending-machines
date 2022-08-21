@@ -1,13 +1,20 @@
 import { Module } from '@nestjs/common';
+import { JwtModule } from '@nestjs/jwt';
 import { MongooseModule } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Document } from 'mongoose';
+import { AuthService } from 'src/auth/auth.service';
 import { User, UserSchema } from './user.schema';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
 
 @Module({
 	imports: [
+		JwtModule.register({
+			// TODO: add to env config
+			secret: '9Y!3q$80D2^T',
+			signOptions: { expiresIn: '7d' },
+		}),
 		MongooseModule.forFeatureAsync([
 			{
 				name: User.name,
@@ -32,7 +39,7 @@ import { UsersService } from './users.service';
 			},
 		]),
 	],
-	providers: [UsersService],
+	providers: [UsersService, AuthService],
 	controllers: [UsersController],
 })
 export class UsersModule {}
