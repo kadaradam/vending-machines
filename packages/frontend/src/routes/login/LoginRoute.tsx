@@ -10,8 +10,8 @@ import {
 } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { Form, Formik } from "formik";
-import { STORAGE_AUTH_TOKEN_KEY } from "src/constants";
 import { TextField } from "src/formik";
+import { useAuth } from "src/hooks";
 import { loginApi, LoginApiDto } from "src/react-query/api";
 import * as Yup from "yup";
 
@@ -21,13 +21,9 @@ const LoginSchema = Yup.object().shape({
 });
 
 const LoginRoute = () => {
+  const { handleSuccessLogin } = useAuth();
   const { mutate: login, isLoading: isLoginLoading } = useMutation(loginApi, {
-    onSuccess: async (response) => {
-      window.localStorage.setItem(
-        STORAGE_AUTH_TOKEN_KEY,
-        response.access_token
-      );
-    },
+    onSuccess: (response) => handleSuccessLogin(response),
   });
 
   return (

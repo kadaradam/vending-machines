@@ -5,7 +5,7 @@ export type LoginApiDto = {
   password: string;
 };
 
-type LoginApiResponse = {
+export type LoginApiResponse = {
   access_token: string;
 };
 
