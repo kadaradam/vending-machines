@@ -1,7 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { CoinWalletType } from 'src/types';
 import { CleanUser } from 'src/users/user.schema';
+import { Wallet } from 'src/utils';
 import { BuyProductDto, CreateProductDto, UpdateProductDto } from './dto';
 import { Product, ProductDocument } from './products.schema';
 
@@ -12,7 +14,60 @@ export class ProductsService {
 	constructor(@InjectModel(Product.name) private productModel: Model<ProductDocument>) {}
 
 	async buyProducts(user: CleanUser, id: string, buyProductDto: BuyProductDto) {
-		return true;
+		const product = await this.productModel.findById(id).exec();
+
+		if (!product) {
+			throw new HttpException('Product not found', HttpStatus.NOT_FOUND);
+		}
+
+		const price = product.cost * buyProductDto.quantity;
+
+		// TODO: fix type
+		const userWallet = Wallet(user.deposit as unknown as CoinWalletType);
+		const userBalance = userWallet.getBalance();
+
+		if (!userWallet.checkContains(buyProductDto.coins)) {
+			throw new HttpException('Coins does not exists', HttpStatus.CONFLICT);
+		}
+
+		if (Wallet(buyProductDto.coins).getBalance() < price) {
+			throw new HttpException('Insufficient funds', HttpStatus.CONFLICT);
+		}
+
+		// Update product balance
+		// TODO: fix type
+		const productWallet = Wallet(product.amountAvailable as unknown as CoinWalletType);
+		productWallet.addCoins(buyProductDto.coins);
+
+		// Update user balance
+		userWallet.removeCoins(buyProductDto.coins);
+
+		const coinChangesInCent = Wallet(buyProductDto.coins).getBalance() - price;
+
+		let coinChanges: CoinWalletType = {};
+
+		if (coinChangesInCent > 0) {
+			coinChanges = productWallet.getChange(coinChangesInCent);
+
+			if (Object.keys(coinChanges).length <= 0) {
+				throw new HttpException('Not enough changes in the machine', HttpStatus.CONFLICT);
+			}
+
+			userWallet.addCoins(coinChanges);
+			productWallet.removeCoins(coinChanges);
+		}
+
+		console.log({ productWallet: productWallet.getBalance() });
+		console.log({ userWallet: userWallet.getBalance() });
+
+		return {
+			spent: price,
+			spentInCoins: buyProductDto.coins,
+			changes: coinChanges,
+			quantity: buyProductDto.quantity,
+			productId: product._id,
+			product: product.productName,
+		};
 	}
 
 	async create(user: CleanUser, createProductDto: CreateProductDto): Promise<Product> {
