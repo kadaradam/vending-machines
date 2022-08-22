@@ -1,6 +1,6 @@
 import axiosService from "../../axiosService";
 
-type LoginApiDto = {
+export type LoginApiDto = {
   username: string;
   password: string;
 };
