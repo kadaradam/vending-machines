@@ -7,21 +7,21 @@ const routes = [
   {
     path: "/",
     exact: true,
-    component: DashboardRoute,
+    element: <DashboardRoute />,
   },
   {
     path: "/login",
     exact: true,
-    component: LoginRoute,
+    element: <LoginRoute />,
   },
   {
     path: "/register",
     exact: true,
-    component: RegisterRoute,
+    element: <RegisterRoute />,
   },
   {
     path: "*",
-    component: PageNotFoundRoute,
+    element: <PageNotFoundRoute />,
   },
 ];
 

@@ -1,13 +1,13 @@
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 
 class Axios {
-  instance = null;
+  instance: AxiosInstance;
 
   constructor() {
-    this.instance = axios.create();
+    this.instance = axios.create({});
   }
 
-  refreshRequestHandler(token) {
+  refreshRequestHandler(token: string) {
     this.instance = axios.create({
       headers: {
         Authorization: `Bearer ${token}`,
