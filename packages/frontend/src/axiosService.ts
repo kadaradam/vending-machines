@@ -7,13 +7,17 @@ class Axios {
     this.instance = axios.create({});
   }
 
-  refreshRequestHandler(token: string) {
-    this.instance = axios.create({
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    });
+  refreshRequestHandler(token: string | null) {
+    if (!token) {
+      this.instance = axios.create({});
+    } else {
+      this.instance = axios.create({
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+    }
   }
 }
 
