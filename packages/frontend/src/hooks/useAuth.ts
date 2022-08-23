@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { useAppContext } from "src/AppContext";
 import axiosService from "src/axiosService";
 import { STORAGE_AUTH_TOKEN_KEY } from "src/constants";
@@ -10,6 +11,8 @@ export function useAuth() {
 
   function handleSuccessRegister() {
     axiosService.refreshRequestHandler(null);
+
+    toast.success("Registered Successfully");
 
     setUserLoggedIn(true);
     navigate("/login", { replace: true });
