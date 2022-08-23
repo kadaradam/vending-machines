@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useAppContext } from "src/AppContext";
 import axiosService from "src/axiosService";
 import { STORAGE_AUTH_TOKEN_KEY } from "src/constants";
-import { LoginApiResponse } from "src/react-query/api";
+import { AutoLoginApiResponse, LoginApiResponse } from "src/react-query/api";
 
 export function useAuth() {
   const navigate = useNavigate();
@@ -23,12 +23,30 @@ export function useAuth() {
     navigate("/dashboard", { replace: true });
   }
 
-  function handleSuccessLogout(response: any) {
+  function handleSuccessLogout() {
     window.localStorage.removeItem(STORAGE_AUTH_TOKEN_KEY);
 
     setUserLoggedIn(false);
     navigate("/login", { replace: true });
   }
 
-  return { handleSuccessRegister, handleSuccessLogin, handleSuccessLogout };
+  function handleAutoLogin(response: AutoLoginApiResponse) {
+    const authToken = window.localStorage.getItem(STORAGE_AUTH_TOKEN_KEY);
+
+    if (!authToken) {
+      throw new Error("Invalid auth token.");
+    }
+
+    axiosService.refreshRequestHandler(authToken);
+
+    setUserLoggedIn(false);
+    navigate("/dashboard", { replace: true });
+  }
+
+  return {
+    handleSuccessRegister,
+    handleSuccessLogin,
+    handleSuccessLogout,
+    handleAutoLogin,
+  };
 }
