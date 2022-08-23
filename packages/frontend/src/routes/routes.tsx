@@ -2,26 +2,44 @@ import PageNotFoundRoute from "./404";
 import DashboardRoute from "./dashboard";
 import LoginRoute from "./login";
 import RegisterRoute from "./register";
+import RequireAuth from "./RequireAuth";
+import RequireUnAuth from "./RequireUnAuth";
 
 const routes = [
   {
     path: "/",
     exact: true,
-    element: <DashboardRoute />,
+    element: (
+      <RequireAuth>
+        <DashboardRoute />
+      </RequireAuth>
+    ),
   },
   {
     path: "/login",
     exact: true,
-    element: <LoginRoute />,
+    element: (
+      <RequireUnAuth>
+        <LoginRoute />
+      </RequireUnAuth>
+    ),
   },
   {
     path: "/register",
     exact: true,
-    element: <RegisterRoute />,
+    element: (
+      <RequireUnAuth>
+        <RegisterRoute />
+      </RequireUnAuth>
+    ),
   },
   {
     path: "*",
-    element: <PageNotFoundRoute />,
+    element: (
+      <RequireAuth>
+        <PageNotFoundRoute />
+      </RequireAuth>
+    ),
   },
 ];
 

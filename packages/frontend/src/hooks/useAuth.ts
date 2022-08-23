@@ -1,12 +1,14 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useAppContext } from "src/AppContext";
 import axiosService from "src/axiosService";
 import { STORAGE_AUTH_TOKEN_KEY } from "src/constants";
 import { AutoLoginApiResponse, LoginApiResponse } from "src/react-query/api";
+import { LocationState } from "src/routes/RequireAuth";
 
 export function useAuth() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { setUserLoggedIn } = useAppContext();
 
   function handleSuccessRegister() {
@@ -22,8 +24,11 @@ export function useAuth() {
     window.localStorage.setItem(STORAGE_AUTH_TOKEN_KEY, response.access_token);
     axiosService.refreshRequestHandler(response.access_token);
 
+    const state = location.state as LocationState;
+    const from = state?.from?.pathname || "/";
+
     setUserLoggedIn(true);
-    navigate("/dashboard", { replace: true });
+    navigate(from, { replace: true });
   }
 
   function handleSuccessLogout() {
