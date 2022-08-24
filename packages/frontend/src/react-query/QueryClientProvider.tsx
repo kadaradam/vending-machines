@@ -1,4 +1,5 @@
 import {
+  MutationCache,
   QueryCache,
   QueryClient,
   QueryClientProvider as OriginalQueryClientProvider,
@@ -15,34 +16,37 @@ type BackendError = {
   statusCode: number;
 };
 
+const handleError = (error: unknown) => {
+  console.log(error);
+
+  if (error instanceof AxiosError) {
+    const typedError: AxiosError<BackendError> = error;
+
+    const errorMessage = typedError?.response?.data?.message;
+
+    if (!errorMessage) {
+      toast.error("Unexpected error");
+      return;
+    }
+
+    toast.error(errorMessage);
+  } else {
+    // The type is literally unknown
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const unknownError = error as any;
+    // Axios errors has message prop
+    const errorToDisplay = unknownError?.message ? unknownError.message : error;
+
+    toast.error(errorToDisplay);
+  }
+};
+
 const queryClient = new QueryClient({
+  mutationCache: new MutationCache({
+    onError: handleError,
+  }),
   queryCache: new QueryCache({
-    onError: (error) => {
-      console.log(error);
-
-      if (error instanceof AxiosError) {
-        const typedError: AxiosError<BackendError> = error;
-
-        const errorMessage = typedError?.response?.data?.message;
-
-        if (!errorMessage) {
-          toast.error("Unexpected error");
-          return;
-        }
-
-        toast.error(errorMessage);
-      } else {
-        // The type is literally unknown
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const unknownError = error as any;
-        // Axios errors has message prop
-        const errorToDisplay = unknownError?.message
-          ? unknownError.message
-          : error;
-
-        toast.error(errorToDisplay);
-      }
-    },
+    onError: handleError,
   }),
 });
 
