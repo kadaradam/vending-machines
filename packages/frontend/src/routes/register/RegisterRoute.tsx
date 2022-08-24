@@ -30,8 +30,6 @@ const RegisterRoute = () => {
     registerApi,
     {
       onSuccess: () => handleSuccessRegister(),
-      // TODO: find out why global error handle not working
-      onError: (error) => console.log("a", error),
     }
   );
 

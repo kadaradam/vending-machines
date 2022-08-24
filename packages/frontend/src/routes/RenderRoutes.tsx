@@ -9,7 +9,7 @@ export const RenderRoutes = () => {
   const [isAxiosReady, setIsAxiosReady] = useState<boolean>(false);
   const { handleAutoLogin, prepareAutoLogin } = useAuth();
 
-  const { isLoading: isAutoLoginLoading } = useQuery(["user"], AutoLoginApi, {
+  const { isFetching: isAutoLoginFetching } = useQuery(["user"], AutoLoginApi, {
     enabled: isAxiosReady,
     onSuccess: (response) => handleAutoLogin(response),
   });
@@ -22,7 +22,7 @@ export const RenderRoutes = () => {
     }
   }, [prepareAutoLogin]);
 
-  if (isAutoLoginLoading) {
+  if (isAutoLoginFetching) {
     // TODO Add spinning
     return null;
   }

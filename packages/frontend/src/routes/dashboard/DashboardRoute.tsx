@@ -1,5 +1,7 @@
+import MainContainer from "src/components";
+
 const DashboardRoute = () => {
-  return <div></div>;
+  return <MainContainer>asd</MainContainer>;
 };
 
 export default DashboardRoute;

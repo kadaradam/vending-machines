@@ -31,7 +31,7 @@ export function useAuth() {
     navigate(from, { replace: true });
   }
 
-  function handleSuccessLogout() {
+  function handleLogout() {
     window.localStorage.removeItem(STORAGE_AUTH_TOKEN_KEY);
 
     setUserLoggedIn(false);
@@ -58,7 +58,7 @@ export function useAuth() {
   return {
     handleSuccessRegister,
     handleSuccessLogin,
-    handleSuccessLogout,
+    handleLogout,
     handleAutoLogin,
     prepareAutoLogin,
   };
