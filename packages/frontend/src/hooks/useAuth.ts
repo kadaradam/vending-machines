@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { useAppContext } from "src/AppContext";
 import axiosService from "src/axiosService";
 import { STORAGE_AUTH_TOKEN_KEY } from "src/constants";
-import { AutoLoginApiResponse, LoginApiResponse } from "src/react-query/api";
+import { getMyUserApiResponse, LoginApiResponse } from "src/react-query/api";
 import { LocationState } from "src/routes/RequireAuth";
 
 export function useAuth() {
@@ -50,7 +50,7 @@ export function useAuth() {
     return true;
   }
 
-  function handleAutoLogin(response: AutoLoginApiResponse) {
+  function handleAutoLogin(response: getMyUserApiResponse) {
     setUserLoggedIn(true);
     navigate("/", { replace: true });
   }
