@@ -38,17 +38,21 @@ export function useAuth() {
     navigate("/login", { replace: true });
   }
 
-  function handleAutoLogin(response: AutoLoginApiResponse) {
+  function prepareAutoLogin(): boolean {
     const authToken = window.localStorage.getItem(STORAGE_AUTH_TOKEN_KEY);
 
     if (!authToken) {
-      throw new Error("Invalid auth token.");
+      return false;
     }
 
     axiosService.refreshRequestHandler(authToken);
 
-    setUserLoggedIn(false);
-    navigate("/dashboard", { replace: true });
+    return true;
+  }
+
+  function handleAutoLogin(response: AutoLoginApiResponse) {
+    setUserLoggedIn(true);
+    navigate("/", { replace: true });
   }
 
   return {
@@ -56,5 +60,6 @@ export function useAuth() {
     handleSuccessLogin,
     handleSuccessLogout,
     handleAutoLogin,
+    prepareAutoLogin,
   };
 }

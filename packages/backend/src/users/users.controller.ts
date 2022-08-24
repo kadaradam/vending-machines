@@ -36,18 +36,18 @@ export class UsersController {
 		return this.authService.register(registerUserDto);
 	}
 
-	@Get(':id')
-	async find(@Request() req: UserRequestType) {
+	@Get()
+	async myProfile(@Request() req: UserRequestType) {
 		return this.usersService.findOne(req.user);
 	}
 
-	@Put(':id')
-	async update(@Request() req: UserRequestType, @Body() updateUserDto: UpdateUserDto) {
+	@Put()
+	async updateMyProfile(@Request() req: UserRequestType, @Body() updateUserDto: UpdateUserDto) {
 		return this.usersService.update(req.user, updateUserDto);
 	}
 
-	@Delete(':id')
-	async delete(@Request() req: UserRequestType) {
+	@Delete()
+	async deleteMyProfile(@Request() req: UserRequestType) {
 		return this.usersService.delete(req.user);
 	}
 }
