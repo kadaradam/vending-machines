@@ -2,16 +2,20 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { useAuth } from "src/hooks";
-import { AutoLoginApi } from "src/react-query/api";
+import { getMyUserApi } from "src/react-query/api";
 import routes from "./routes";
 
 export const RenderRoutes = () => {
   const [isAxiosReady, setIsAxiosReady] = useState<boolean>(false);
+  const [isAppLoaded, setAppLoaded] = useState<boolean>(false);
   const { handleAutoLogin, prepareAutoLogin } = useAuth();
 
-  const { isFetching: isAutoLoginFetching } = useQuery(["user"], AutoLoginApi, {
+  useQuery(["user"], getMyUserApi, {
     enabled: isAxiosReady,
-    onSuccess: (response) => handleAutoLogin(response),
+    onSuccess: (response) => {
+      handleAutoLogin(response);
+      setAppLoaded(true);
+    },
   });
 
   useEffect(() => {
@@ -19,11 +23,16 @@ export const RenderRoutes = () => {
 
     if (isSuccess) {
       setIsAxiosReady(true);
+    } else {
+      setAppLoaded(true);
     }
   }, [prepareAutoLogin]);
 
-  if (isAutoLoginFetching) {
-    // TODO Add spinning
+  // IMPORTANT
+  // Do not render the routes, until the app is loaded
+  // First we have to try to login automatically
+  // The auth guard will catch the user not loged in, which can cause infinite requests
+  if (!isAppLoaded) {
     return null;
   }
 

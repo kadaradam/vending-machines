@@ -52,7 +52,6 @@ export function useAuth() {
 
   function handleAutoLogin(response: getMyUserApiResponse) {
     setUserLoggedIn(true);
-    navigate("/", { replace: true });
   }
 
   return {
