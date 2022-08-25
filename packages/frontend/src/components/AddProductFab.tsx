@@ -88,7 +88,7 @@ const AddProductFab = ({ refetch }: { refetch: () => void }) => {
                 margin="normal"
                 required
                 fullWidth
-                label="Price"
+                label="Price (in cents)"
                 name="cost"
                 type="number"
                 autoFocus

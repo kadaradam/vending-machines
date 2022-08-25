@@ -52,7 +52,7 @@ export const SellerDashboardRoute = () => {
           <TableHead>
             <TableRow>
               <TableCell>Product name</TableCell>
-              <TableCell align="right">Price</TableCell>
+              <TableCell align="right">Price (in cents)</TableCell>
               <TableCell align="right">Balance</TableCell>
               <TableCell align="right" />
               {/* Delete Icon */}

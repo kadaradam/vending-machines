@@ -56,6 +56,18 @@ const routes = [
       </RequireAuth>
     ),
   },
+  // TODO
+  /*  {
+    path: `/${buyerRoute}/settings`,
+    exact: true,
+    element: (
+      <RequireAuth>
+        <RequireRole role={RolesEnum.BUYER}>
+          <BuyerSettingsRoute />
+        </RequireRole>
+      </RequireAuth>
+    ),
+  }, */
   {
     path: "/login",
     exact: true,
