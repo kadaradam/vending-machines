@@ -41,20 +41,6 @@ export const getEmptyWallet = (): CoinWalletType =>
     return previousValue;
   }, {});
 
-export function calculateChanges(cents: number): CoinWalletType {
-  let amount = cents;
-  const coinChanges: CoinWalletType = {};
-
-  coinVariants
-    .sort((a, b) => b - a)
-    .forEach((coinType) => {
-      coinChanges[coinType] = Math.round(amount / coinType);
-      amount = amount % coinType;
-    });
-
-  return coinChanges;
-}
-
 export function Wallet(coins: CoinWalletType) {
   return {
     coins,
