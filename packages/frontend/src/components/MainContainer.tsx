@@ -4,12 +4,20 @@ import {
   Box,
   Container,
   IconButton,
+  SxProps,
+  Theme,
   Toolbar,
   Typography,
 } from "@mui/material";
 import { useAuth } from "src/hooks";
 
-const MainContainer = ({ children }: { children: React.ReactNode }) => {
+export const MainContainer = ({
+  children,
+  sx,
+}: {
+  children: React.ReactNode;
+  sx?: SxProps<Theme> | undefined;
+}) => {
   const { handleLogout } = useAuth();
 
   return (
@@ -33,9 +41,9 @@ const MainContainer = ({ children }: { children: React.ReactNode }) => {
           </Box>
         </Toolbar>
       </AppBar>
-      <Container component="main">{children}</Container>
+      <Container component="main" sx={{ ...sx, pt: 3 }}>
+        {children}
+      </Container>
     </>
   );
 };
-
-export default MainContainer;
