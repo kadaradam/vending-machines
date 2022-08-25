@@ -1,7 +1,7 @@
 import { ROLE_ROUTER_NAMES } from "src/constants";
 import { RolesEnum } from "src/types";
 import PageNotFoundRoute from "./404";
-import { BuyerDashboardRoute } from "./dashboard";
+import { BuyerDashboardRoute, SellerDashboardRoute } from "./dashboard";
 import LoginRoute from "./login";
 import RegisterRoute from "./register";
 import RequireAuth from "./RequireAuth";
@@ -39,8 +39,8 @@ const routes = [
     exact: true,
     element: (
       <RequireAuth>
-        <RequireRole role={RolesEnum.BUYER}>
-          <BuyerDashboardRoute />
+        <RequireRole role={RolesEnum.SELLER}>
+          <SellerDashboardRoute />
         </RequireRole>
       </RequireAuth>
     ),

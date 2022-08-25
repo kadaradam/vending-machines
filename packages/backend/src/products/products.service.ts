@@ -82,6 +82,7 @@ export class ProductsService {
 
 		const createdProduct = new this.productModel({
 			productName: createProductDto.productName,
+			cost: createProductDto.cost,
 			sellerId: user._id,
 		});
 

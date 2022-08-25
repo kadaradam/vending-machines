@@ -33,7 +33,7 @@ export const BuyerDashboardRoute = () => {
     isLoading: isUserLoading,
   } = useQuery(["user"], getMyUserApi);
   const { data: products, isLoading: isProductsLoading } = useQuery(
-    ["products"],
+    ["products-buyer"],
     getBuyerProducts
   );
   const { mutate: buyProduct, isLoading: isBuyLoading } = useMutation(

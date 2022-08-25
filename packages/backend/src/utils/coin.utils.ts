@@ -96,6 +96,3 @@ export function Wallet(coins: CoinWalletType) {
 		},
 	};
 }
-
-	return coinChanges;
-}
