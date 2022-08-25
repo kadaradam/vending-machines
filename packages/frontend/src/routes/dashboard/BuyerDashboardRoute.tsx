@@ -44,6 +44,7 @@ export const BuyerDashboardRoute = () => {
         toast("Success");
         refetchUser();
 
+        setCoins([]);
         setPurchaseChanges(
           Object.keys(response.changes).length > 0 ? response.changes : {}
         );
