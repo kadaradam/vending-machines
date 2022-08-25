@@ -1,9 +1,16 @@
-import { Button, Card, Grid, Typography } from "@mui/material";
-import { useQuery } from "@tanstack/react-query";
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+import { Box, Button, Card, Grid, IconButton, Typography } from "@mui/material";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { toast } from "react-toastify";
 import { MainContainer, ProductItem } from "src/components";
 import CoinSelector from "src/components/CoinSelector";
-import { getBuyerProducts, getMyUserApi } from "src/react-query/api";
+import {
+  buyProductApi,
+  getBuyerProducts,
+  getMyUserApi,
+} from "src/react-query/api";
 import { CoinWalletType, prettyCurrency, Wallet } from "src/utils";
 
 function arrayToObject(arr: number[]) {
@@ -19,6 +26,7 @@ function arrayToObject(arr: number[]) {
 const DashboardRoute = () => {
   const [selectedId, setSelectedId] = useState<string>("");
   const [coins, setCoins] = useState<number[]>([]);
+  const [productQuantity, setProductQuantity] = useState<number>(1);
   const { data: user, isLoading: isUserLoading } = useQuery(
     ["user"],
     getMyUserApi
@@ -27,14 +35,28 @@ const DashboardRoute = () => {
     ["products"],
     getBuyerProducts
   );
-
-  const valueOfSelected = useMemo(
-    () =>
-      selectedId
-        ? products?.find((product) => product._id === selectedId)?.cost ?? 0
-        : 0,
-    [selectedId, products]
+  const { mutate: buyProduct, isLoading: isBuyLoading } = useMutation(
+    buyProductApi,
+    {
+      onSuccess: () => toast("Success"),
+    }
   );
+
+  const valueOfSelected = useMemo(() => {
+    if (!selectedId) {
+      return 0;
+    }
+
+    const selectedProduct = products?.find(
+      (product) => product._id === selectedId
+    );
+
+    if (!selectedProduct) {
+      return 0;
+    }
+
+    return selectedProduct.cost * productQuantity;
+  }, [selectedId, products, productQuantity]);
 
   const valueOfInserted = useMemo(
     () => Wallet(arrayToObject(coins)).getBalance(),
@@ -45,8 +67,6 @@ const DashboardRoute = () => {
     () => (user?.deposit ? Wallet(user.deposit).getBalance() : 0),
     [user]
   );
-
-  const handleSubmit = () => console.log("submit");
 
   if (isUserLoading || isProductsLoading) {
     // TODO Add spinning
@@ -101,12 +121,58 @@ const DashboardRoute = () => {
               max={balanceOfUser}
             />
           </Card>
+          <Card sx={{ p: 2, mb: 2 }} elevation={2}>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Box>
+                <Typography variant="body1" sx={{ pb: 1 }}>
+                  Quantity
+                </Typography>
+                <IconButton
+                  onClick={() =>
+                    setProductQuantity((prevState) => prevState + 1)
+                  }
+                >
+                  <AddIcon />
+                </IconButton>
+                <IconButton
+                  onClick={() =>
+                    setProductQuantity((prevState) =>
+                      prevState > 1 ? prevState - 1 : 1
+                    )
+                  }
+                >
+                  <RemoveIcon />
+                </IconButton>
+              </Box>
+              <Typography
+                variant="caption"
+                sx={{
+                  width: "100%",
+                  textAlign: "center",
+                  fontSize: 32,
+                  fontWeight: "bold",
+                }}
+              >
+                {productQuantity}
+              </Typography>
+            </Box>
+          </Card>
 
           <Button
             color="primary"
             variant="contained"
             fullWidth
-            onClick={handleSubmit}
+            onClick={() =>
+              buyProduct({
+                productId: selectedId,
+                quantity: productQuantity,
+                coins: arrayToObject(coins),
+              })
+            }
             disabled={!selectedId || valueOfSelected > valueOfInserted}
           >
             Buy

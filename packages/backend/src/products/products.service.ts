@@ -66,7 +66,7 @@ export class ProductsService {
 			changes: coinChanges,
 			quantity: buyProductDto.quantity,
 			productId: product._id,
-			product: product.productName,
+			productName: product.productName,
 		};
 	}
 
