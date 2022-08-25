@@ -23,7 +23,7 @@ function arrayToObject(arr: number[]) {
   }, {});
 }
 
-const DashboardRoute = () => {
+export const BuyerDashboardRoute = () => {
   const [selectedId, setSelectedId] = useState<string>("");
   const [coins, setCoins] = useState<number[]>([]);
   const [productQuantity, setProductQuantity] = useState<number>(1);
@@ -189,5 +189,3 @@ const DashboardRoute = () => {
     </MainContainer>
   );
 };
-
-export default DashboardRoute;
