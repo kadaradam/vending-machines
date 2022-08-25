@@ -23,6 +23,7 @@ const CoinSelector = ({
     <Box width="100%" display="flex" alignItems="center">
       {coinVariants.map((coinType) => (
         <Button
+          key={coinType}
           size="small"
           variant="outlined"
           color="secondary"
