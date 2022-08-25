@@ -24,6 +24,9 @@ export class User {
 
 	@Prop({ enum: Object.values(RolesEnum), default: RolesEnum.BUYER })
 	role: RolesEnum;
+
+	@Prop()
+	session: string;
 }
 
 export interface CleanUser extends Omit<User, 'password'> {

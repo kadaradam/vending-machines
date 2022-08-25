@@ -37,6 +37,13 @@ const handleError = (error: unknown) => {
     // Axios errors has message prop
     const errorToDisplay = unknownError?.message ? unknownError.message : error;
 
+    // TODO: Update to use error codes
+    if (
+      errorToDisplay === "There is already an active session using your account"
+    ) {
+      // logout user
+    }
+
     toast.error(errorToDisplay);
   }
 };

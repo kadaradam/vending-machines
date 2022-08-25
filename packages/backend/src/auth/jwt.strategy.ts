@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { PassportStrategy } from '@nestjs/passport';
@@ -20,6 +20,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 	}
 
 	async validate(payload: any): Promise<CleanUser> {
-		return this.userModel.findById(payload.sub).exec();
+		const user = await this.userModel.findById(payload.sub).exec();
+
+		if (user.session !== payload.session) {
+			throw new HttpException(
+				'There is already an active session using your account',
+				HttpStatus.UNAUTHORIZED,
+			);
+		}
+
+		return user;
 	}
 }

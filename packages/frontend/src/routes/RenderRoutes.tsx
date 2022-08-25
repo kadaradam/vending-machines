@@ -1,3 +1,4 @@
+import { Box, CircularProgress } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
@@ -16,6 +17,7 @@ export const RenderRoutes = () => {
       handleAutoLogin(response);
       setAppLoaded(true);
     },
+    retry: 1,
   });
 
   useEffect(() => {
@@ -33,7 +35,19 @@ export const RenderRoutes = () => {
   // First we have to try to login automatically
   // The auth guard will catch the user not loged in, which can cause infinite requests
   if (!isAppLoaded) {
-    return null;
+    return (
+      <Box
+        sx={{
+          height: "100vh",
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <CircularProgress size={64} />
+      </Box>
+    );
   }
 
   return (

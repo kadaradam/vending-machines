@@ -35,7 +35,19 @@ export class AuthService {
 	}
 
 	async login(user: CleanUser) {
-		const payload = { username: user.username, sub: user._id };
+		const sessionToken = Math.random().toString(36).slice(2);
+
+		await this.userModel.updateOne(
+			{ _id: user._id },
+			{
+				$set: {
+					session: sessionToken,
+				},
+			},
+		);
+
+		const payload = { username: user.username, sub: user._id, session: sessionToken };
+
 		return {
 			access_token: this.jwtService.sign(payload),
 		};
