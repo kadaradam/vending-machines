@@ -6,6 +6,8 @@ import {
 } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import axiosService from "src/axiosService";
+import { STORAGE_AUTH_TOKEN_KEY } from "src/constants";
 
 type QueryClientProviderProps = {
   children?: React.ReactNode;
@@ -29,6 +31,14 @@ const handleError = (error: unknown) => {
       return;
     }
 
+    if (
+      errorMessage === "There is already an active session using your account"
+    ) {
+      // logout user
+      window.localStorage.removeItem(STORAGE_AUTH_TOKEN_KEY);
+      axiosService.refreshRequestHandler(null);
+    }
+
     toast.error(errorMessage);
   } else {
     // The type is literally unknown
@@ -36,13 +46,6 @@ const handleError = (error: unknown) => {
     const unknownError = error as any;
     // Axios errors has message prop
     const errorToDisplay = unknownError?.message ? unknownError.message : error;
-
-    // TODO: Update to use error codes
-    if (
-      errorToDisplay === "There is already an active session using your account"
-    ) {
-      // logout user
-    }
 
     toast.error(errorToDisplay);
   }
