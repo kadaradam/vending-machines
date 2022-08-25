@@ -25,21 +25,29 @@ const CardWithTitle = ({
 );
 
 const ProfileRoute = () => {
-  const { data: user, isLoading } = useQuery(["user"], getMyUserApi);
+  const {
+    data: user,
+    refetch: refetchUser,
+    isLoading,
+  } = useQuery(["user"], getMyUserApi);
   const { mutate: reset, isLoading: isResetLoading } = useMutation(
     resetBalance,
     {
-      onSuccess: () => toast("Success"),
+      onSuccess: () => {
+        toast("Success");
+        refetchUser();
+      },
     }
   );
   const { mutate: deposit, isLoading: isDepositLoading } = useMutation(
     depositBalance,
     {
-      onSuccess: () => toast("Success"),
+      onSuccess: () => {
+        toast("Success");
+        refetchUser();
+      },
     }
   );
-
-  console.log(user);
 
   // TODO: Add spinner
   if (isLoading || !user) {
