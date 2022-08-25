@@ -1,6 +1,8 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { CoinWalletType } from 'src/types';
+import { Wallet } from 'src/utils';
 import { UpdateUserDto } from './dto';
 import { DepositAmountDto } from './dto/deposit-amount.dto';
 import { CleanUser, User, UserDocument } from './user.schema';
@@ -37,9 +39,12 @@ export class UsersService {
 	}
 
 	async depositAmount(user: CleanUser, depositAmountDto: DepositAmountDto) {
-		// TODO: Add proper sum
+		// TODO: fix type
+		const userWallet = Wallet(user.deposit as unknown as CoinWalletType);
+		userWallet.addCoins(depositAmountDto.coins);
+
 		return this.userModel
-			.findByIdAndUpdate(user._id, { $inc: { deposit: depositAmountDto.coins } })
+			.findByIdAndUpdate(user._id, { $set: { deposit: userWallet.coins } })
 			.exec();
 	}
 
