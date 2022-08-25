@@ -25,27 +25,25 @@ export class ProductsService {
 
 		const price = product.cost * buyProductDto.quantity;
 
-		// TODO: fix type
-		const userWallet = Wallet(user.deposit as unknown as CoinWalletType);
-		const userBalance = userWallet.getBalance();
+		const userWallet = Wallet(user.deposit);
+		const insertedMoneyValue = Wallet(buyProductDto.coins).getBalance();
 
 		if (!userWallet.checkContains(buyProductDto.coins)) {
 			throw new HttpException('Coins does not exists', HttpStatus.CONFLICT);
 		}
 
-		if (Wallet(buyProductDto.coins).getBalance() < price) {
+		if (insertedMoneyValue < price) {
 			throw new HttpException('Insufficient funds', HttpStatus.CONFLICT);
 		}
 
 		// Update product balance
-		// TODO: fix type
-		const productWallet = Wallet(product.amountAvailable as unknown as CoinWalletType);
+		const productWallet = Wallet(product.amountAvailable);
 		productWallet.addCoins(buyProductDto.coins);
 
 		// Update user balance
 		userWallet.removeCoins(buyProductDto.coins);
 
-		const coinChangesInCent = Wallet(buyProductDto.coins).getBalance() - price;
+		const coinChangesInCent = insertedMoneyValue - price;
 
 		let coinChanges: CoinWalletType = {};
 

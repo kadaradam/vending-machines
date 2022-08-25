@@ -1,4 +1,4 @@
-import { CoinWalletType } from 'src/types';
+import { CoinWalletSchemaType, CoinWalletType } from 'src/types';
 
 const sumObjectsByKey = (...objs) => {
 	const res = objs.reduce((a, b) => {
@@ -41,7 +41,7 @@ export function calculateChanges(cents: number): CoinWalletType {
 	return coinChanges;
 }
 
-export function Wallet(coins: CoinWalletType) {
+export function Wallet(coins: CoinWalletType | CoinWalletSchemaType) {
 	return {
 		coins,
 		getBalance() {
