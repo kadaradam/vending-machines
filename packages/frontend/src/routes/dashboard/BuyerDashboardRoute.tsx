@@ -27,6 +27,7 @@ export const BuyerDashboardRoute = () => {
   const [selectedId, setSelectedId] = useState<string>("");
   const [coins, setCoins] = useState<number[]>([]);
   const [productQuantity, setProductQuantity] = useState<number>(1);
+  const [purchaseChanges, setPurchaseChanges] = useState<CoinWalletType>({});
   const {
     data: user,
     refetch: refetchUser,
@@ -39,9 +40,13 @@ export const BuyerDashboardRoute = () => {
   const { mutate: buyProduct, isLoading: isBuyLoading } = useMutation(
     buyProductApi,
     {
-      onSuccess: () => {
+      onSuccess: (response) => {
         toast("Success");
         refetchUser();
+
+        setPurchaseChanges(
+          Object.keys(response.changes).length > 0 ? response.changes : {}
+        );
       },
     }
   );
@@ -65,6 +70,11 @@ export const BuyerDashboardRoute = () => {
   const valueOfInserted = useMemo(
     () => Wallet(arrayToObject(coins)).getBalance(),
     [coins]
+  );
+
+  const valueOfChanges = useMemo(
+    () => Wallet(purchaseChanges).getBalance(),
+    [purchaseChanges]
   );
 
   const balanceOfUser = useMemo(
@@ -99,13 +109,13 @@ export const BuyerDashboardRoute = () => {
               Wallet
             </Typography>
             <Typography variant="body2" sx={{ pb: 0.5 }}>
+              Your balance: <strong>{prettyCurrency(balanceOfUser)}</strong>
+            </Typography>
+            <Typography variant="body2" sx={{ pb: 0.5 }}>
               Product's price:{" "}
               <strong>
                 {valueOfSelected ? prettyCurrency(valueOfSelected) : "-"}
               </strong>
-            </Typography>
-            <Typography variant="body2" sx={{ pb: 0.5 }}>
-              Your balance: <strong>{prettyCurrency(balanceOfUser)}</strong>
             </Typography>
             <Typography variant="body2">
               Inserted value:{" "}
@@ -184,6 +194,11 @@ export const BuyerDashboardRoute = () => {
           >
             Buy
           </Button>
+          {valueOfChanges ? (
+            <Typography variant="body2" sx={{ pt: 1 }}>
+              Changes: <strong>{prettyCurrency(valueOfChanges)}</strong>
+            </Typography>
+          ) : null}
         </Grid>
       </Grid>
     </MainContainer>

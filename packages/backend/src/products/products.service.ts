@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CoinWalletType } from 'src/types';
-import { CleanUser } from 'src/users/user.schema';
+import { CleanUser, User, UserDocument } from 'src/users/user.schema';
 import { Wallet } from 'src/utils';
 import { BuyProductDto, CreateProductDto, UpdateProductDto } from './dto';
 import { Product, ProductDocument } from './products.schema';
@@ -11,7 +11,10 @@ type ProductKeys = keyof Product;
 
 @Injectable()
 export class ProductsService {
-	constructor(@InjectModel(Product.name) private productModel: Model<ProductDocument>) {}
+	constructor(
+		@InjectModel(User.name) private userModel: Model<UserDocument>,
+		@InjectModel(Product.name) private productModel: Model<ProductDocument>,
+	) {}
 
 	async buyProducts(user: CleanUser, id: string, buyProductDto: BuyProductDto) {
 		const product = await this.productModel.findById(id).exec();
@@ -56,6 +59,22 @@ export class ProductsService {
 			userWallet.addCoins(coinChanges);
 			productWallet.removeCoins(coinChanges);
 		}
+
+		// TODO: fix type
+		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+		// @ts-ignore
+		product.amountAvailable = productWallet.coins;
+
+		await product.save();
+
+		await this.userModel.findOneAndUpdate(
+			{ _id: user._id },
+			{
+				$set: {
+					deposit: userWallet.coins,
+				},
+			},
+		);
 
 		console.log({ productWallet: productWallet.getBalance() });
 		console.log({ userWallet: userWallet.getBalance() });
