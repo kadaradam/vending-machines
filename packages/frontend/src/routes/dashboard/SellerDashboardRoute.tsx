@@ -14,29 +14,28 @@ import { toast } from "react-toastify";
 import { MainContainer } from "src/components";
 import AddProductFab from "src/components/AddProductFab";
 import {
-  buyProductApi,
+  deleteProductApi,
   getMyUserApi,
   getSellerProducts,
 } from "src/react-query/api";
 import { prettyCurrency, Wallet } from "src/utils";
 
 export const SellerDashboardRoute = () => {
-  const {
-    data: user,
-    refetch: refetchUser,
-    isLoading: isUserLoading,
-  } = useQuery(["user"], getMyUserApi);
+  const { data: user, isLoading: isUserLoading } = useQuery(
+    ["user"],
+    getMyUserApi
+  );
   const {
     data: products,
     refetch: refetchProducts,
     isLoading: isProductsLoading,
   } = useQuery(["products-seller"], getSellerProducts);
-  const { mutate: buyProduct, isLoading: isBuyLoading } = useMutation(
-    buyProductApi,
+  const { mutate: deleteProduct, isLoading: isDeleteLoading } = useMutation(
+    deleteProductApi,
     {
       onSuccess: () => {
         toast("Success");
-        refetchUser();
+        refetchProducts();
       },
     }
   );
@@ -73,7 +72,10 @@ export const SellerDashboardRoute = () => {
                   {prettyCurrency(Wallet(row.amountAvailable).getBalance())}
                 </TableCell>
                 <TableCell align="right">
-                  <IconButton onClick={() => {}}>
+                  <IconButton
+                    disabled={isDeleteLoading}
+                    onClick={() => deleteProduct({ productId: row._id })}
+                  >
                     <DeleteIcon sx={{ fontSize: 20 }} />
                   </IconButton>
                 </TableCell>

@@ -1,5 +1,6 @@
 export * from "./addProduct.api";
 export * from "./buyProduct.api";
+export * from "./deleteProduct.api";
 export * from "./depositBalance.api";
 export * from "./getBuyerProducts.api";
 export * from "./getMyUser.api";
