@@ -27,10 +27,11 @@ const DashboardRoute = () => {
   const [selectedId, setSelectedId] = useState<string>("");
   const [coins, setCoins] = useState<number[]>([]);
   const [productQuantity, setProductQuantity] = useState<number>(1);
-  const { data: user, isLoading: isUserLoading } = useQuery(
-    ["user"],
-    getMyUserApi
-  );
+  const {
+    data: user,
+    refetch: refetchUser,
+    isLoading: isUserLoading,
+  } = useQuery(["user"], getMyUserApi);
   const { data: products, isLoading: isProductsLoading } = useQuery(
     ["products"],
     getBuyerProducts
@@ -38,7 +39,10 @@ const DashboardRoute = () => {
   const { mutate: buyProduct, isLoading: isBuyLoading } = useMutation(
     buyProductApi,
     {
-      onSuccess: () => toast("Success"),
+      onSuccess: () => {
+        toast("Success");
+        refetchUser();
+      },
     }
   );
 
@@ -68,7 +72,7 @@ const DashboardRoute = () => {
     [user]
   );
 
-  if (isUserLoading || isProductsLoading) {
+  if (isUserLoading || isProductsLoading || !user) {
     // TODO Add spinning
     return null;
   }
@@ -81,7 +85,6 @@ const DashboardRoute = () => {
             {products?.map((product) => (
               <Grid item xs={3} key={product._id}>
                 <ProductItem
-                  // @ts-ignore
                   item={product}
                   selected={product._id === selectedId}
                   onClick={() => setSelectedId(product._id)}
@@ -116,9 +119,11 @@ const DashboardRoute = () => {
               Insert your coins
             </Typography>
             <CoinSelector
+              coins={coins}
               setCoins={setCoins}
               valueOfCoins={valueOfInserted}
               max={balanceOfUser}
+              wallet={user.deposit}
             />
           </Card>
           <Card sx={{ p: 2, mb: 2 }} elevation={2}>
@@ -173,7 +178,9 @@ const DashboardRoute = () => {
                 coins: arrayToObject(coins),
               })
             }
-            disabled={!selectedId || valueOfSelected > valueOfInserted}
+            disabled={
+              !selectedId || valueOfSelected > valueOfInserted || isBuyLoading
+            }
           >
             Buy
           </Button>

@@ -1,10 +1,10 @@
-import { CoinWalletSchemaType } from "src/types";
+import { CoinWalletType } from "src/utils";
 import axiosService from "../../axiosService";
 
 export type DepositBalanceResponse = {};
 
 export type DepositBalanceDto = {
-  coins: CoinWalletSchemaType;
+  coins: CoinWalletType;
 };
 
 export async function depositBalance(

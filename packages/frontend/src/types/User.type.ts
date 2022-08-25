@@ -1,7 +1,8 @@
-import { CoinWalletSchemaType, RolesEnum } from ".";
+import { CoinWalletType } from "src/utils";
+import { RolesEnum } from ".";
 
 export type UserType = {
   username: string;
   role: RolesEnum;
-  deposit: CoinWalletSchemaType;
+  deposit: CoinWalletType;
 };

@@ -1,9 +1,9 @@
-import { CoinWalletSchemaType } from ".";
+import { CoinWalletType } from "src/utils";
 
 export type ProductType = {
   _id: string;
   sellerId: string;
   productName: string;
-  amountAvailable: CoinWalletSchemaType;
+  amountAvailable: CoinWalletType;
   cost: number;
 };
