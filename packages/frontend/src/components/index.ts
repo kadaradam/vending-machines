@@ -1,1 +1,2 @@
-export { default } from "./MainContainer";
+export * from "./MainContainer";
+export * from "./ProductItem";
