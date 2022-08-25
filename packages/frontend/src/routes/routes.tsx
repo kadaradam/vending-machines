@@ -1,10 +1,13 @@
+import { RolesEnum } from "src/types";
 import PageNotFoundRoute from "./404";
 import DashboardRoute from "./dashboard";
 import LoginRoute from "./login";
-import ProfileRoute from "./profile";
 import RegisterRoute from "./register";
 import RequireAuth from "./RequireAuth";
+import RequireRole from "./RequireRole";
 import RequireUnAuth from "./RequireUnAuth";
+import RoleGuard from "./RoleGuard";
+import { BuyerSettingsRoute } from "./settings";
 
 const routes = [
   {
@@ -12,16 +15,29 @@ const routes = [
     exact: true,
     element: (
       <RequireAuth>
-        <DashboardRoute />
+        <RoleGuard />
       </RequireAuth>
     ),
   },
   {
-    path: "/profile",
+    path: "/buyer/dashboard",
     exact: true,
     element: (
       <RequireAuth>
-        <ProfileRoute />
+        <RequireRole role={RolesEnum.BUYER}>
+          <DashboardRoute />
+        </RequireRole>
+      </RequireAuth>
+    ),
+  },
+  {
+    path: "/buyer/settings",
+    exact: true,
+    element: (
+      <RequireAuth>
+        <RequireRole role={RolesEnum.BUYER}>
+          <BuyerSettingsRoute />
+        </RequireRole>
       </RequireAuth>
     ),
   },

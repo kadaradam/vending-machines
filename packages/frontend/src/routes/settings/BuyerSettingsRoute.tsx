@@ -24,7 +24,7 @@ const CardWithTitle = ({
   </Card>
 );
 
-const ProfileRoute = () => {
+export const BuyerSettingsRoute = () => {
   const {
     data: user,
     refetch: refetchUser,
@@ -92,5 +92,3 @@ const ProfileRoute = () => {
     </MainContainer>
   );
 };
-
-export default ProfileRoute;
