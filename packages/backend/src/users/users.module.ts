@@ -5,6 +5,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import * as bcrypt from 'bcrypt';
 import { Document } from 'mongoose';
 import { AuthService } from 'src/auth/auth.service';
+import { Product, ProductSchema } from 'src/products/products.schema';
 import { User, UserSchema } from './user.schema';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
@@ -42,6 +43,7 @@ import { UsersService } from './users.service';
 				},
 			},
 		]),
+		MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
 	],
 	providers: [UsersService, AuthService],
 	controllers: [UsersController],

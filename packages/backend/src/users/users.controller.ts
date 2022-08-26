@@ -30,6 +30,13 @@ export class UsersController {
 		return this.usersService.resetDeposit(req.user);
 	}
 
+	@UseGuards(RolesGuard)
+	@Roles(RolesEnum.SELLER)
+	@Get('/all-balance')
+	async getSellerOverallBalance(@Request() req: UserRequestType) {
+		return this.usersService.getSellerOverallBalance(req.user);
+	}
+
 	// Alias: Same as /auth/register route
 	@Post()
 	async create(@Body() registerUserDto: RegisterDto) {

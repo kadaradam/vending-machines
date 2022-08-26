@@ -1,28 +1,13 @@
-import { Box, Button, Card, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "react-toastify";
-import { MainContainer } from "src/components";
+import { CardWithTitle, MainContainer } from "src/components";
 import {
   depositBalance,
   getMyUserApi,
   resetBalance,
 } from "src/react-query/api";
 import { Wallet } from "src/utils";
-
-const CardWithTitle = ({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) => (
-  <Card sx={{ p: 2 }}>
-    <Typography variant="body2" gutterBottom sx={{ fontWeight: "bold" }}>
-      {title}
-    </Typography>
-    <Box>{children}</Box>
-  </Card>
-);
 
 export const BuyerSettingsRoute = () => {
   const {

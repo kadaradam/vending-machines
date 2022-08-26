@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Product, ProductDocument } from 'src/products/products.schema';
 import { Wallet } from 'src/utils';
 import { UpdateUserDto } from './dto';
 import { DepositAmountDto } from './dto/deposit-amount.dto';
@@ -8,9 +9,22 @@ import { CleanUser, User, UserDocument } from './user.schema';
 
 type CleanUserKeys = keyof CleanUser;
 
+const sumObjectsByKey = (...objs) => {
+	const res = objs.reduce((a, b) => {
+		for (const k in b) {
+			if (b.hasOwnProperty(k)) a[k] = (a[k] || 0) + b[k];
+		}
+		return a;
+	}, {});
+	return res;
+};
+
 @Injectable()
 export class UsersService {
-	constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
+	constructor(
+		@InjectModel(User.name) private userModel: Model<UserDocument>,
+		@InjectModel(Product.name) private productModel: Model<ProductDocument>,
+	) {}
 
 	async findOne(user: CleanUser): Promise<CleanUser> {
 		return this.userModel.findById(user._id).exec();
@@ -48,5 +62,14 @@ export class UsersService {
 
 	async resetDeposit(user: CleanUser) {
 		return this.userModel.findByIdAndUpdate(user._id, { deposit: 0 }).exec();
+	}
+
+	async getSellerOverallBalance(user: CleanUser) {
+		const userProducts = await this.productModel.find({ sellerId: user._id }).exec();
+
+		const productBalanceMap = userProducts.map((product) => product.amountAvailable);
+		const combinedBalance = sumObjectsByKey(...productBalanceMap);
+
+		return combinedBalance;
 	}
 }

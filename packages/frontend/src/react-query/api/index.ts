@@ -4,6 +4,7 @@ export * from "./deleteProduct.api";
 export * from "./depositBalance.api";
 export * from "./getBuyerProducts.api";
 export * from "./getMyUser.api";
+export * from "./getSellerBalance.api";
 export * from "./getSellerProducts.api";
 export * from "./login.api";
 export * from "./resetBalance.api";

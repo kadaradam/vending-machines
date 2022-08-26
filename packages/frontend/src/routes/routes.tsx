@@ -8,7 +8,7 @@ import RequireAuth from "./RequireAuth";
 import RequireRole from "./RequireRole";
 import RequireUnAuth from "./RequireUnAuth";
 import RoleGuard from "./RoleGuard";
-import { BuyerSettingsRoute } from "./settings";
+import { BuyerSettingsRoute, SellerSettingsRoute } from "./settings";
 
 const buyerRoute = ROLE_ROUTER_NAMES[RolesEnum.BUYER];
 const sellerRoute = ROLE_ROUTER_NAMES[RolesEnum.SELLER];
@@ -56,18 +56,17 @@ const routes = [
       </RequireAuth>
     ),
   },
-  // TODO
-  /*  {
-    path: `/${buyerRoute}/settings`,
+  {
+    path: `/${sellerRoute}/settings`,
     exact: true,
     element: (
       <RequireAuth>
-        <RequireRole role={RolesEnum.BUYER}>
-          <BuyerSettingsRoute />
+        <RequireRole role={RolesEnum.SELLER}>
+          <SellerSettingsRoute />
         </RequireRole>
       </RequireAuth>
     ),
-  }, */
+  },
   {
     path: "/login",
     exact: true,
