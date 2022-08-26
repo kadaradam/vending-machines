@@ -23,7 +23,7 @@ export const SellerSettingsRoute = () => {
           justifyContent="space-between"
         >
           <Typography variant="body2">
-            Balance: {balance ? Wallet(balance).getBalance() : "-"}
+            Total balance: {balance ? Wallet(balance).getBalance() : "-"}
           </Typography>
         </Box>
       </CardWithTitle>
