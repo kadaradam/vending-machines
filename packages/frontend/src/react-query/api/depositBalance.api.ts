@@ -11,7 +11,7 @@ export async function depositBalance(
   depositBalanceDto: DepositBalanceDto
 ): Promise<DepositBalanceResponse> {
   const { data } = await axiosService.instance.put<DepositBalanceResponse>(
-    "/users/deposit",
+    "/users/buyer/deposit",
     depositBalanceDto
   );
 

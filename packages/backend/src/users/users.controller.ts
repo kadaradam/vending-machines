@@ -18,43 +18,43 @@ export class UsersController {
 
 	@UseGuards(RolesGuard)
 	@Roles(RolesEnum.BUYER)
-	@Put('/deposit')
+	@Put('/buyer/deposit')
 	async deposit(@Request() req: UserRequestType, @Body() depositAmountDto: DepositAmountDto) {
 		return this.usersService.depositAmount(req.user, depositAmountDto);
 	}
 
 	@UseGuards(RolesGuard)
 	@Roles(RolesEnum.BUYER)
-	@Post('/reset')
+	@Post('/buyer/reset')
 	async reset(@Request() req: UserRequestType) {
 		return this.usersService.resetDeposit(req.user);
 	}
 
 	@UseGuards(RolesGuard)
 	@Roles(RolesEnum.SELLER)
-	@Get('/all-balance')
+	@Get('/seller/balance')
 	async getSellerOverallBalance(@Request() req: UserRequestType) {
 		return this.usersService.getSellerOverallBalance(req.user);
 	}
 
 	// Alias: Same as /auth/register route
 	@Post()
-	async create(@Body() registerUserDto: RegisterDto) {
+	async registerUser(@Body() registerUserDto: RegisterDto) {
 		return this.authService.register(registerUserDto);
 	}
 
 	@Get()
-	async myProfile(@Request() req: UserRequestType) {
-		return this.usersService.findOne(req.user);
+	async getMyProfile(@Request() req: UserRequestType) {
+		return this.usersService.getMyProfile(req.user);
 	}
 
 	@Put()
 	async updateMyProfile(@Request() req: UserRequestType, @Body() updateUserDto: UpdateUserDto) {
-		return this.usersService.update(req.user, updateUserDto);
+		return this.usersService.updateMyProfile(req.user, updateUserDto);
 	}
 
 	@Delete()
 	async deleteMyProfile(@Request() req: UserRequestType) {
-		return this.usersService.delete(req.user);
+		return this.usersService.deleteMyProfile(req.user);
 	}
 }

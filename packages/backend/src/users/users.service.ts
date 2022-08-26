@@ -26,11 +26,11 @@ export class UsersService {
 		@InjectModel(Product.name) private productModel: Model<ProductDocument>,
 	) {}
 
-	async findOne(user: CleanUser): Promise<CleanUser> {
+	async getMyProfile(user: CleanUser): Promise<CleanUser> {
 		return this.userModel.findById(user._id).exec();
 	}
 
-	async update(user: CleanUser, updateUserDto: UpdateUserDto): Promise<CleanUser> {
+	async updateMyProfile(user: CleanUser, updateUserDto: UpdateUserDto): Promise<CleanUser> {
 		// Class validator should catch not supported properties
 		// Extra validation in case of malfunctioning
 		const allowedPropsToUpdate: CleanUserKeys[] = ['deposit', 'role'];
@@ -47,7 +47,7 @@ export class UsersService {
 			return this.userModel.findByIdAndUpdate(user._id, updateUserDto).exec();
 	}
 
-	async delete(user: CleanUser): Promise<CleanUser> {
+	async deleteMyProfile(user: CleanUser): Promise<CleanUser> {
 		return this.userModel.findByIdAndDelete(user._id).exec();
 	}
 

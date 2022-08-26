@@ -34,7 +34,7 @@ export class ProductsController {
 
 	// For buyer to browse from products
 	@Roles(RolesEnum.BUYER)
-	@Get()
+	@Get('/buyer')
 	async getBuyerProducts() {
 		return this.productsService.listProductsForBuyer();
 	}
@@ -42,7 +42,7 @@ export class ProductsController {
 	// CRUD
 	// For sellers to list all their products
 	@Roles(RolesEnum.SELLER)
-	@Get('/my')
+	@Get('/seller')
 	async getSellerProducts(@Request() req: UserRequestType) {
 		return this.productsService.listProductsForSeller(req.user);
 	}

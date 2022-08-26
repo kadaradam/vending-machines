@@ -5,7 +5,7 @@ export type GetSellerBalanceResponse = CoinWalletType;
 
 export async function getSellerBalanceApi(): Promise<GetSellerBalanceResponse> {
   const { data } = await axiosService.instance.get<GetSellerBalanceResponse>(
-    "/users/all-balance"
+    "/users/seller/balance"
   );
 
   return data;

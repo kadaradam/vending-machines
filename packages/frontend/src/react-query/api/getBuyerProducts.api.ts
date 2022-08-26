@@ -5,7 +5,7 @@ export type getBuyerProductsResponse = ProductType[];
 
 export async function getBuyerProducts(): Promise<getBuyerProductsResponse> {
   const { data } = await axiosService.instance.get<getBuyerProductsResponse>(
-    "/products"
+    "/products/buyer"
   );
 
   return data;
