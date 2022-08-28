@@ -57,7 +57,9 @@ export class Wallet {
           }
         }
       });
-    return changeToReturn;
+
+    // return empty object if unable to give change
+    return change === 0 ? changeToReturn : {};
   }
 
   addCoins(coinsToAdd: CoinWalletType) {
