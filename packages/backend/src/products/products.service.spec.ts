@@ -127,4 +127,42 @@ describe('ProductsService', () => {
 			expect(product).toBe(null);
 		});
 	});
+
+	describe('updateProduct', () => {
+		it('should update a product', async () => {
+			const withUser = CleanUserDTOStub();
+			const toGetProduct = CreateProductDTOStub();
+			const createdProduct = await new productModel({
+				...toGetProduct,
+				sellerId: withUser._id,
+			}).save();
+
+			const newProductName = 'Fanta';
+
+			await service.update(withUser, createdProduct._id.toString(), {
+				productName: newProductName,
+			});
+
+			const updatedProduct = await productModel.findById(createdProduct._id);
+
+			expect(updatedProduct.productName).toBe(newProductName);
+		});
+	});
+
+	describe('deleteProduct', () => {
+		it('should delete a product', async () => {
+			const withUser = CleanUserDTOStub();
+			const toGetProduct = CreateProductDTOStub();
+			const createdProduct = await new productModel({
+				...toGetProduct,
+				sellerId: withUser._id,
+			}).save();
+
+			await service.delete(withUser, createdProduct._id.toString());
+
+			const updatedProduct = await productModel.findById(createdProduct._id);
+
+			expect(updatedProduct).toBe(null);
+		});
+	});
 });
