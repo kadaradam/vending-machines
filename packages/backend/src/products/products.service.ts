@@ -124,7 +124,7 @@ export class ProductsService {
 	): Promise<Product> {
 		// Class validator should catch not supported properties
 		// Extra validation in case of malfunctioning
-		const allowedPropsToUpdate: ProductKeys[] = ['amountAvailable'];
+		const allowedPropsToUpdate: ProductKeys[] = ['cost', 'productName'];
 
 		const isUpdateAllowed = Object.keys(updateProductDto).every((prop) =>
 			allowedPropsToUpdate.includes(prop as ProductKeys),
