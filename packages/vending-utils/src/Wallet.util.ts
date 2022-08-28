@@ -1,20 +1,7 @@
 import { CoinWalletType, ObjectNumberOnly } from "@vending/types";
 import { substractObjectsByKey, sumObjectsByKey } from ".";
 
-const getEmptyWallet = (): CoinWalletType =>
-  coinVariants.reduce((previousValue: ObjectNumberOnly, coinType) => {
-    previousValue[coinType] = 0;
-    return previousValue;
-  }, {});
-
-export const prettyCurrency = (num: number) =>
-  (num / 100).toLocaleString("en-US", {
-    style: "currency",
-    currency: "USD",
-  });
-
 export const coinVariants = [5, 10, 20, 50, 100];
-
 export class Wallet {
   private coins: CoinWalletType;
 
@@ -83,3 +70,9 @@ export class Wallet {
     return this;
   }
 }
+
+const getEmptyWallet = (): CoinWalletType =>
+  coinVariants.reduce((previousValue: ObjectNumberOnly, coinType) => {
+    previousValue[coinType] = 0;
+    return previousValue;
+  }, {});
