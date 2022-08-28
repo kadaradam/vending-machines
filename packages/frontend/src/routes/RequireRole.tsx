@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
+import { RolesEnum } from "@vending/types";
 import { Navigate } from "react-router-dom";
 import { getMyUserApi } from "src/react-query/api";
-import { RolesEnum } from "src/types";
 
 export default function RequireRole({
   role,

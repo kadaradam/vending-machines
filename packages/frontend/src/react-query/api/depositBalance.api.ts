@@ -1,4 +1,4 @@
-import { CoinWalletType } from "src/utils";
+import { CoinWalletType } from "@vending/types";
 import axiosService from "../../axiosService";
 
 export type DepositBalanceResponse = {};

@@ -1,4 +1,5 @@
 import { Body, Controller, Delete, Get, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { RolesEnum } from '@vending/types';
 import { AuthService } from 'src/auth/auth.service';
 import { RegisterDto } from 'src/auth/dto';
 import { Roles } from 'src/auth/roles.decorator';
@@ -6,7 +7,6 @@ import { RolesGuard } from 'src/auth/roles.guard';
 import { UserRequestType } from 'src/types';
 import { UpdateUserDto } from './dto';
 import { DepositAmountDto } from './dto/deposit-amount.dto';
-import { RolesEnum } from './user.schema';
 import { UsersService } from './users.service';
 
 @Controller('users')

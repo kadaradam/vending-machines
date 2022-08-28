@@ -1,5 +1,5 @@
+import { RolesEnum } from "@vending/types";
 import { ROLE_ROUTER_NAMES } from "src/constants";
-import { RolesEnum } from "src/types";
 import PageNotFoundRoute from "./404";
 import { BuyerDashboardRoute, SellerDashboardRoute } from "./dashboard";
 import LoginRoute from "./login";

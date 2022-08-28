@@ -1,5 +1,6 @@
 import { Box, Button, Typography } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { Wallet } from "@vending/utils";
 import { toast } from "react-toastify";
 import { CardWithTitle, MainContainer } from "src/components";
 import {
@@ -7,7 +8,6 @@ import {
   getMyUserApi,
   resetBalance,
 } from "src/react-query/api";
-import { Wallet } from "src/utils";
 
 export const BuyerSettingsRoute = () => {
   const {
@@ -49,7 +49,7 @@ export const BuyerSettingsRoute = () => {
           justifyContent="space-between"
         >
           <Typography variant="body2">
-            Balance: {Wallet(user.deposit).getBalance()}
+            Balance: {new Wallet(user.deposit).getBalanceInCents()}
           </Typography>
           <Box>
             <Button

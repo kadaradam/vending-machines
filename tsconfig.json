@@ -1,0 +1,11 @@
+{
+  "exclude": ["packages/**/dist/**"],
+  "references": [
+    {
+      "path": "./packages/vending-types"
+    },
+    {
+      "path": "./packages/vending-utils"
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Wallet } from '@vending/utils';
 import { Document, Schema as MongooseSchema } from 'mongoose';
 import { CoinWalletSchemaType } from 'src/types';
 import { User } from 'src/users/user.schema';
-import { getEmptyWallet } from 'src/utils';
 
 export type ProductDocument = Product & Document;
 
@@ -14,7 +14,7 @@ export class Product {
 	@Prop({ required: true })
 	productName: string;
 
-	@Prop({ type: CoinWalletSchemaType, default: getEmptyWallet() })
+	@Prop({ type: CoinWalletSchemaType, default: new Wallet() })
 	amountAvailable: CoinWalletSchemaType;
 
 	@Prop({ default: 0 })
