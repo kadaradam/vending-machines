@@ -1,3 +1,3 @@
-export type CoinWalletType = {
-	[key: number]: number;
-};
+import { ObjectNumberOnly } from ".";
+
+export type CoinWalletType = ObjectNumberOnly;

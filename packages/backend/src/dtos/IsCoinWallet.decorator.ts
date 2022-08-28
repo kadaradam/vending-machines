@@ -1,6 +1,6 @@
 import { CoinWalletType } from '@vending/types';
+import { coinVariants } from '@vending/utils';
 import { registerDecorator, ValidationOptions } from 'class-validator';
-import { coinVariants } from 'src/utils';
 
 const isObject = (variable: object) =>
 	typeof variable === 'object' && !Array.isArray(variable) && variable !== null;

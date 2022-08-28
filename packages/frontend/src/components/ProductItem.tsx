@@ -1,6 +1,6 @@
 import { Box, Typography } from "@mui/material";
+import { prettyCurrency } from "@vending/utils";
 import { ProductType } from "src/types";
-import { prettyCurrency } from "src/utils";
 
 type ProductItemProps = {
   item: ProductType;

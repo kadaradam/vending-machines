@@ -10,6 +10,7 @@ import {
   TableRow,
 } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { prettyCurrency, Wallet } from "@vending/utils";
 import { toast } from "react-toastify";
 import { MainContainer } from "src/components";
 import AddProductFab from "src/components/AddProductFab";
@@ -18,7 +19,6 @@ import {
   getMyUserApi,
   getSellerProducts,
 } from "src/react-query/api";
-import { prettyCurrency, Wallet } from "src/utils";
 
 export const SellerDashboardRoute = () => {
   const { data: user, isLoading: isUserLoading } = useQuery(
@@ -69,7 +69,9 @@ export const SellerDashboardRoute = () => {
                 </TableCell>
                 <TableCell align="right">{row.cost}</TableCell>
                 <TableCell align="right">
-                  {prettyCurrency(Wallet(row.amountAvailable).getBalance())}
+                  {prettyCurrency(
+                    new Wallet(row.amountAvailable).getBalanceInCents()
+                  )}
                 </TableCell>
                 <TableCell align="right">
                   <IconButton

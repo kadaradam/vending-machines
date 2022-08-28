@@ -1,9 +1,9 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { CoinWalletType } from '@vending/types';
+import { Wallet } from '@vending/utils';
 import { Model } from 'mongoose';
 import { CleanUser, User, UserDocument } from 'src/users/user.schema';
-import { Wallet } from 'src/utils';
 import { BuyProductDto, CreateProductDto, UpdateProductDto } from './dto';
 import { Product, ProductDocument } from './products.schema';
 
@@ -25,8 +25,8 @@ export class ProductsService {
 
 		const price = product.cost * buyProductDto.quantity;
 
-		const userWallet = Wallet(user.deposit);
-		const insertedMoneyValue = Wallet(buyProductDto.coins).getBalance();
+		const userWallet = new Wallet(user.deposit as unknown as CoinWalletType);
+		const insertedMoneyValue = new Wallet(buyProductDto.coins).getBalanceInCents();
 
 		if (!userWallet.checkContains(buyProductDto.coins)) {
 			throw new HttpException('Coins does not exists', HttpStatus.CONFLICT);
@@ -37,7 +37,7 @@ export class ProductsService {
 		}
 
 		// Update product balance
-		const productWallet = Wallet(product.amountAvailable);
+		const productWallet = new Wallet(product.amountAvailable as unknown as CoinWalletType);
 		productWallet.addCoins(buyProductDto.coins);
 
 		// Update user balance
@@ -61,7 +61,7 @@ export class ProductsService {
 		// TODO: fix type
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		// @ts-ignore
-		product.amountAvailable = productWallet.coins;
+		product.amountAvailable = productWallet.getBalanceInCoins();
 
 		await product.save();
 
@@ -69,13 +69,13 @@ export class ProductsService {
 			{ _id: user._id },
 			{
 				$set: {
-					deposit: userWallet.coins,
+					deposit: userWallet.getBalanceInCoins(),
 				},
 			},
 		);
 
-		console.log({ productWallet: productWallet.getBalance() });
-		console.log({ userWallet: userWallet.getBalance() });
+		console.log({ productWallet: productWallet.getBalanceInCents() });
+		console.log({ userWallet: userWallet.getBalanceInCents() });
 
 		return {
 			spent: price,

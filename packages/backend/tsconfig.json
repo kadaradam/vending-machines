@@ -2,6 +2,9 @@
 	"references": [
 		{
 			"path": "../vending-types"
+		},
+		{
+			"path": "../vending-utils"
 		}
 	],
 	"compilerOptions": {

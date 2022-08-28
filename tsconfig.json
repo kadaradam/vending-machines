@@ -3,6 +3,9 @@
   "references": [
     {
       "path": "./packages/vending-types"
+    },
+    {
+      "path": "./packages/vending-utils"
     }
   ]
 }

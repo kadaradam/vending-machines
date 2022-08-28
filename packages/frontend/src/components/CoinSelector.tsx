@@ -1,6 +1,6 @@
 import { Box, Button } from "@mui/material";
 import { CoinWalletType } from "@vending/types";
-import { coinVariants, prettyCurrency } from "src/utils";
+import { coinVariants, prettyCurrency } from "@vending/utils";
 
 type CoinSelectorProps = {
   coins: number[];

@@ -3,6 +3,7 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import { Box, Button, Card, Grid, IconButton, Typography } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { CoinWalletType } from "@vending/types";
+import { prettyCurrency, Wallet } from "@vending/utils";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { MainContainer, ProductItem } from "src/components";
@@ -12,7 +13,6 @@ import {
   getBuyerProducts,
   getMyUserApi,
 } from "src/react-query/api";
-import { prettyCurrency, Wallet } from "src/utils";
 
 function arrayToObject(arr: number[]) {
   return arr.reduce((currentValue: CoinWalletType, nextValue) => {
@@ -70,17 +70,17 @@ export const BuyerDashboardRoute = () => {
   }, [selectedId, products, productQuantity]);
 
   const valueOfInserted = useMemo(
-    () => Wallet(arrayToObject(coins)).getBalance(),
+    () => new Wallet(arrayToObject(coins)).getBalanceInCents(),
     [coins]
   );
 
   const valueOfChanges = useMemo(
-    () => Wallet(purchaseChanges).getBalance(),
+    () => new Wallet(purchaseChanges).getBalanceInCents(),
     [purchaseChanges]
   );
 
   const balanceOfUser = useMemo(
-    () => (user?.deposit ? Wallet(user.deposit).getBalance() : 0),
+    () => (user?.deposit ? new Wallet(user.deposit).getBalanceInCents() : 0),
     [user]
   );
 
