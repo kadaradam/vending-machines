@@ -95,9 +95,36 @@ describe('ProductsService', () => {
 			const withUser = CleanUserDTOStub();
 			const toCreateProduct = CreateProductDTOStub();
 
+			await new productModel({ ...toCreateProduct, sellerId: withUser._id }).save();
+
 			await expect(service.create(withUser, toCreateProduct)).rejects.toThrow(
 				new ProductAlreadyExists(),
 			);
+		});
+	});
+
+	describe('getProduct', () => {
+		it('should get created product', async () => {
+			const withUser = CleanUserDTOStub();
+			const toGetProduct = CreateProductDTOStub();
+			const createdProduct = await new productModel({
+				...toGetProduct,
+				sellerId: withUser._id,
+			}).save();
+
+			const product = await service.findOne(withUser, createdProduct._id.toString());
+
+			expect(product.productName).toBe(toGetProduct.productName);
+			expect(product.cost).toBe(toGetProduct.cost);
+			expect(product.sellerId.toString()).toBe(withUser._id.toString());
+		});
+
+		it('should get a not existing product', async () => {
+			const withUser = CleanUserDTOStub();
+
+			const product = await service.findOne(withUser, '630be4a3ec6c4cf54a04c894');
+
+			expect(product).toBe(null);
 		});
 	});
 });
