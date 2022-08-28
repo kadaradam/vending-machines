@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { CoinWalletType } from '@vending/types';
 import { Wallet } from '@vending/utils';
 import { Model } from 'mongoose';
+import { CoinWalletSchemaType } from 'src/types';
 import { CleanUser, User, UserDocument } from 'src/users/user.schema';
 import { BuyProductDto, CreateProductDto, UpdateProductDto } from './dto';
 import { Product, ProductDocument } from './products.schema';
@@ -58,10 +59,8 @@ export class ProductsService {
 			productWallet.removeCoins(coinChanges);
 		}
 
-		// TODO: fix type
-		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-		// @ts-ignore
-		product.amountAvailable = productWallet.getBalanceInCoins();
+		product.amountAvailable =
+			productWallet.getBalanceInCoins() as unknown as CoinWalletSchemaType;
 
 		await product.save();
 
