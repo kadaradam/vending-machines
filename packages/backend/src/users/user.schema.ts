@@ -1,15 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { RolesEnum } from '@vending/types';
 import mongoose, { Document } from 'mongoose';
 import { CoinWalletSchemaType } from 'src/types';
 import { getEmptyWallet } from 'src/utils';
 
 export type UserDocument = User & Document;
-
-// move to lib
-export enum RolesEnum {
-	BUYER = 'BUYER',
-	SELLER = 'SELLER',
-}
 
 @Schema()
 export class User {

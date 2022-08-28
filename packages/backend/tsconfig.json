@@ -1,5 +1,11 @@
 {
+	"references": [
+		{
+			"path": "../vending-types"
+		}
+	],
 	"compilerOptions": {
+		"composite": true,
 		"module": "commonjs",
 		"declaration": true,
 		"removeComments": true,

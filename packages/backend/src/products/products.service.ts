@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { CoinWalletType } from '@vending/types';
 import { Model } from 'mongoose';
-import { CoinWalletType } from 'src/types';
 import { CleanUser, User, UserDocument } from 'src/users/user.schema';
 import { Wallet } from 'src/utils';
 import { BuyProductDto, CreateProductDto, UpdateProductDto } from './dto';

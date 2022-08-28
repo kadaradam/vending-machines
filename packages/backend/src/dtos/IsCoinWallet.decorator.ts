@@ -1,5 +1,5 @@
+import { CoinWalletType } from '@vending/types';
 import { registerDecorator, ValidationOptions } from 'class-validator';
-import { CoinWalletType } from 'src/types';
 import { coinVariants } from 'src/utils';
 
 const isObject = (variable: object) =>

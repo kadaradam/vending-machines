@@ -1,6 +1,4 @@
-export type CoinWalletType = {
-  [key: number]: number;
-};
+import { CoinWalletType } from "@vending/types";
 
 // @ts-ignore
 const sumObjectsByKey = (...objs) => {

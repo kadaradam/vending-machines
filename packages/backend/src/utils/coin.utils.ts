@@ -1,4 +1,5 @@
-import { CoinWalletSchemaType, CoinWalletType } from 'src/types';
+import { CoinWalletType } from '@vending/types';
+import { CoinWalletSchemaType } from 'src/types';
 
 const sumObjectsByKey = (...objs) => {
 	const res = objs.reduce((a, b) => {

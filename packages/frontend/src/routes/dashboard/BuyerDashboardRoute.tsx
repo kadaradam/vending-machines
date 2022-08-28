@@ -2,6 +2,7 @@ import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { Box, Button, Card, Grid, IconButton, Typography } from "@mui/material";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { CoinWalletType } from "@vending/types";
 import { useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { MainContainer, ProductItem } from "src/components";
@@ -11,7 +12,7 @@ import {
   getBuyerProducts,
   getMyUserApi,
 } from "src/react-query/api";
-import { CoinWalletType, prettyCurrency, Wallet } from "src/utils";
+import { prettyCurrency, Wallet } from "src/utils";
 
 function arrayToObject(arr: number[]) {
   return arr.reduce((currentValue: CoinWalletType, nextValue) => {

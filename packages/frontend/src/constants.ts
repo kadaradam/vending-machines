@@ -1,4 +1,4 @@
-import { RolesEnum } from "./types";
+import { RolesEnum } from "@vending/types";
 
 export const STORAGE_AUTH_TOKEN_KEY = "auth";
 

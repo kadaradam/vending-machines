@@ -7,7 +7,7 @@
   "scripts": {
     "backend": "yarn workspace backend start:dev",
     "frontend": "yarn workspace frontend start",
-    "start": "concurrently --kill-others-on-fail \"yarn backend\"  \"yarn frontend\""
+    "start": "concurrently --kill-others-on-fail \"yarn workspace @vending/types build\" \"yarn backend\"  \"yarn frontend\""
   },
   "engines": {
     "node": "16.13.2",

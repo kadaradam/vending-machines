@@ -1,4 +1,4 @@
-import { CoinWalletType } from "src/utils";
+import { CoinWalletType } from "@vending/types";
 
 export type ProductType = {
   _id: string;

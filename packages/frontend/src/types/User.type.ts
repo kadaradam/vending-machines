@@ -1,5 +1,4 @@
-import { CoinWalletType } from "src/utils";
-import { RolesEnum } from ".";
+import { CoinWalletType, RolesEnum } from "@vending/types";
 
 export type UserType = {
   username: string;
