@@ -1,5 +1,5 @@
 {
-  "exclude": ["packages/**/tests/**", "packages/**/dist/**"],
+  "exclude": ["packages/**/dist/**"],
   "references": [
     {
       "path": "./packages/vending-types"
