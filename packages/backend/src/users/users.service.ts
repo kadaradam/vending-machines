@@ -24,7 +24,7 @@ export class UsersService {
 	async updateMyProfile(user: CleanUser, updateUserDto: UpdateUserDto): Promise<CleanUser> {
 		// Class validator should catch not supported properties
 		// Extra validation in case of malfunctioning
-		const allowedPropsToUpdate: CleanUserKeys[] = ['deposit', 'role'];
+		const allowedPropsToUpdate: CleanUserKeys[] = ['username'];
 
 		const isUpdateAllowed = Object.keys(updateUserDto).every((prop) =>
 			allowedPropsToUpdate.includes(prop as CleanUserKeys),
