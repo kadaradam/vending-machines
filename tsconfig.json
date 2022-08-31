@@ -2,10 +2,10 @@
   "exclude": ["packages/**/dist/**"],
   "references": [
     {
-      "path": "./packages/vending-types"
+      "path": "./packages/types"
     },
     {
-      "path": "./packages/vending-utils"
+      "path": "./packages/utils"
     }
   ]
 }
