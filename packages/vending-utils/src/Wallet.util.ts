@@ -44,10 +44,13 @@ export class Wallet {
       .sort((a, b) => b - a)
       .forEach((coinType) => {
         if (change >= coinType) {
-          const numCoins = Math.floor(change / coinType);
+          const numCoins = Math.min(
+            Math.floor(change / coinType),
+            this.coins[coinType]
+          );
 
           if (numCoins <= this.coins[coinType]) {
-            change %= coinType;
+            change -= coinType * numCoins;
 
             if (changeToReturn[coinType]) {
               changeToReturn[coinType] = changeToReturn[coinType] += numCoins;
