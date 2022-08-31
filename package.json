@@ -2,13 +2,14 @@
   "name": "vending-machines",
   "private": true,
   "workspaces": [
+    "apps/*",
     "packages/*"
   ],
   "scripts": {
     "backend": "yarn workspace backend start:dev",
     "frontend": "yarn workspace frontend start",
-    "build:shared": "concurrently \"yarn workspace @vending/types build\" \"yarn workspace @vending/utils build\"",
-    "start": "yarn build:shared && concurrently --kill-others-on-fail \"yarn backend\"  \"yarn frontend\""
+    "build:packages": "concurrently \"yarn workspace @vending/types build\" \"yarn workspace @vending/utils build\"",
+    "start": "yarn build:packages && concurrently --kill-others-on-fail \"yarn backend\"  \"yarn frontend\""
   },
   "engines": {
     "node": ">=16.13.2",

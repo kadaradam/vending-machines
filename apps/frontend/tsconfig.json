@@ -1,10 +1,10 @@
 {
   "references": [
     {
-      "path": "../vending-types"
+      "path": "../types"
     },
     {
-      "path": "../vending-utils"
+      "path": "../utils"
     }
   ],
   "compilerOptions": {
