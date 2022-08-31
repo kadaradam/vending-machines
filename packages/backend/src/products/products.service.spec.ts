@@ -1,26 +1,30 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { RolesEnum } from '@vending/types/src';
+import { CoinWalletType, RolesEnum } from '@vending/types/src';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose, { connect, Connection, Model } from 'mongoose';
 import { CleanUser, User, UserSchema } from 'src/users/user.schema';
 import { Product, ProductSchema } from './products.schema';
 import { ProductsService } from './products.service';
 
-const CleanUserDTOStub = (): CleanUser => {
+const CleanUserDTOStub = (
+	{ deposit }: Pick<CleanUser, 'deposit'> = { deposit: { 100: 0, 50: 0, 20: 0, 10: 0, 5: 0 } },
+): CleanUser => {
 	return {
 		session: '-',
 		_id: new mongoose.Types.ObjectId('630bd1f86d320d062f172244'),
-		deposit: { 100: 0, 50: 0, 20: 0, 10: 0, 5: 0 },
+		deposit: deposit,
 		role: RolesEnum.BUYER,
 		username: 'John Doe',
 	};
 };
 
-const CreateProductDTOStub = (): Pick<Product, 'productName' | 'cost'> => {
+const CreateProductDTOStub = (
+	{ cost }: Pick<Product, 'cost'> = { cost: 200 },
+): Pick<Product, 'productName' | 'cost'> => {
 	return {
-		cost: 200,
+		cost,
 		productName: 'Cola',
 	};
 };
@@ -28,6 +32,18 @@ const CreateProductDTOStub = (): Pick<Product, 'productName' | 'cost'> => {
 class ProductAlreadyExists extends HttpException {
 	constructor() {
 		super('Product already exists', HttpStatus.CONFLICT);
+	}
+}
+
+class NoChangeInMachine extends HttpException {
+	constructor() {
+		super('Not enough changes in the machine', HttpStatus.CONFLICT);
+	}
+}
+
+class NonExistentCoins extends HttpException {
+	constructor() {
+		super('Coins does not exists', HttpStatus.CONFLICT);
 	}
 }
 
@@ -163,6 +179,154 @@ describe('ProductsService', () => {
 			const updatedProduct = await productModel.findById(createdProduct._id);
 
 			expect(updatedProduct).toBe(null);
+		});
+	});
+
+	describe('buyProduct', () => {
+		it('should successfully buy a product with no change', async () => {
+			const withUser = CleanUserDTOStub({ deposit: { 100: 1, 50: 2, 20: 0, 10: 0, 5: 0 } });
+			const toGetProduct = CreateProductDTOStub();
+
+			await new userModel({ ...withUser, password: 'test' }).save();
+			const createdProduct = await new productModel({
+				...toGetProduct,
+				sellerId: withUser._id,
+			}).save();
+
+			const quantityToBuy = 1;
+			await service.buyProducts(withUser, createdProduct._id.toString(), {
+				coins: withUser.deposit as unknown as CoinWalletType,
+				quantity: quantityToBuy,
+			});
+
+			const boughtProduct = await productModel.findById(createdProduct._id);
+			const user = await userModel.findById(withUser._id);
+
+			expect(boughtProduct.amountAvailable).toMatchObject({
+				100: 1,
+				50: 2,
+				20: 0,
+				10: 0,
+				5: 0,
+			});
+			expect(user.deposit).toMatchObject({ 100: 0, 50: 0, 20: 0, 10: 0, 5: 0 });
+
+			/* expect(buyResult.changes).toStrictEqual({});
+			expect(buyResult.productId).toStrictEqual(createdProduct._id);
+			expect(buyResult.productName).toBe(createdProduct.productName);
+			expect(buyResult.quantity).toBe(quantityToBuy);
+			expect(buyResult.spent).toBe(quantityToBuy * createdProduct.cost);
+			expect(buyResult.spentInCoins).toBe(withUser.deposit); */
+		});
+
+		it('should successfully buy a product with 100 change back (user overpaid)', async () => {
+			// Initially user has 450 balance
+			const withUser = CleanUserDTOStub({ deposit: { 100: 2, 50: 2, 20: 2, 10: 1, 5: 20 } });
+			const toGetProduct = CreateProductDTOStub();
+			const quantityToBuy = 1;
+
+			await new userModel({ ...withUser, password: 'test' }).save();
+			const createdProduct = await new productModel({
+				...toGetProduct,
+				sellerId: withUser._id,
+			}).save();
+
+			// User inserts 250 balance
+			await service.buyProducts(withUser, createdProduct._id.toString(), {
+				coins: { 100: 0, 50: 2, 20: 2, 10: 1, 5: 20 },
+				quantity: quantityToBuy,
+			});
+
+			const boughtProduct = await productModel.findById(createdProduct._id);
+			const user = await userModel.findById(withUser._id);
+
+			// Seller's balance: 200
+			expect(boughtProduct.amountAvailable).toMatchObject({
+				100: 0,
+				50: 1,
+				20: 2,
+				10: 1,
+				5: 20,
+			});
+			// User balance after purchase: 250
+			expect(user.deposit).toMatchObject({ 100: 2, 50: 1, 20: 0, 10: 0, 5: 0 });
+		});
+
+		it('should successfully buy a product with 100 change back (from sellers balance)', async () => {
+			// Initially user has 350 balance
+			const withUser = CleanUserDTOStub({ deposit: { 100: 3, 50: 1, 20: 0, 10: 0, 5: 0 } });
+			const toGetProduct = CreateProductDTOStub({ cost: 250 });
+			const quantityToBuy = 1;
+
+			// Initially seller has 65 balance
+			await new userModel({ ...withUser, password: 'test' }).save();
+			const createdProduct = await new productModel({
+				...toGetProduct,
+				amountAvailable: { 100: 0, 50: 0, 20: 2, 10: 2, 5: 1 },
+				sellerId: withUser._id,
+			}).save();
+
+			// User inserts 300 balance
+			await service.buyProducts(withUser, createdProduct._id.toString(), {
+				coins: { 100: 3, 50: 0, 20: 0, 10: 0, 5: 0 },
+				quantity: quantityToBuy,
+			});
+
+			const boughtProduct = await productModel.findById(createdProduct._id);
+			const user = await userModel.findById(withUser._id);
+
+			// Seller's balance: 65 + 250 = 315
+			expect(boughtProduct.amountAvailable).toMatchObject({
+				'5': 1,
+				'10': 1,
+				'20': 0,
+				'50': 0,
+				'100': 3,
+			});
+			// User balance after purchase: 300 - 250 = 50
+			expect(user.deposit).toMatchObject({ '5': 0, '10': 1, '20': 2, '50': 1, '100': 0 });
+		});
+
+		it('should throw error when buy a product: no changes in the machine', async () => {
+			// Initially user has 350 balance
+			const withUser = CleanUserDTOStub({ deposit: { 100: 3, 50: 1, 20: 0, 10: 0, 5: 0 } });
+			const toGetProduct = CreateProductDTOStub({ cost: 250 });
+			const quantityToBuy = 1;
+
+			await new userModel({ ...withUser, password: 'test' }).save();
+			const createdProduct = await new productModel({
+				...toGetProduct,
+				sellerId: withUser._id,
+			}).save();
+
+			// User inserts 300 balance
+			await expect(
+				service.buyProducts(withUser, createdProduct._id.toString(), {
+					coins: { 100: 3, 50: 0, 20: 0, 10: 0, 5: 0 },
+					quantity: quantityToBuy,
+				}),
+			).rejects.toThrow(new NoChangeInMachine());
+		});
+
+		it('should throw error when buy a product: coins are not in users wallet', async () => {
+			// Initially user has 450 balance
+			const withUser = CleanUserDTOStub({ deposit: { 100: 0, 50: 6, 20: 2, 10: 1, 5: 20 } });
+			const toGetProduct = CreateProductDTOStub();
+			const quantityToBuy = 1;
+
+			await new userModel({ ...withUser, password: 'test' }).save();
+			const createdProduct = await new productModel({
+				...toGetProduct,
+				sellerId: withUser._id,
+			}).save();
+
+			// User inserts 250 balance
+			await expect(
+				service.buyProducts(withUser, createdProduct._id.toString(), {
+					coins: { 100: 1, 50: 1, 20: 2, 10: 1, 5: 10 },
+					quantity: quantityToBuy,
+				}),
+			).rejects.toThrow(new NonExistentCoins());
 		});
 	});
 });
