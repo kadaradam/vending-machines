@@ -52,10 +52,12 @@ export class UsersService {
 	}
 
 	async resetDeposit(user: CleanUser) {
-		return this.userModel.findByIdAndUpdate(user._id, { deposit: 0 }).exec();
+		return this.userModel
+			.findByIdAndUpdate(user._id, { deposit: new Wallet().getBalanceInCoins() })
+			.exec();
 	}
 
-	async getSellerOverallBalance(user: CleanUser) {
+	async getSellerTotalBalance(user: CleanUser) {
 		const userProducts = await this.productModel.find({ sellerId: user._id }).exec();
 
 		const productBalanceMap = userProducts.map((product) => product.amountAvailable);

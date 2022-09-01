@@ -34,7 +34,7 @@ export class UsersController {
 	@Roles(RolesEnum.SELLER)
 	@Get('/seller/balance')
 	async getSellerOverallBalance(@Request() req: UserRequestType) {
-		return this.usersService.getSellerOverallBalance(req.user);
+		return this.usersService.getSellerTotalBalance(req.user);
 	}
 
 	// Alias: Same as /auth/register route
