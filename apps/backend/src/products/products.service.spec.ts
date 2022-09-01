@@ -176,9 +176,9 @@ describe('ProductsService', () => {
 
 			await service.delete(withUser, createdProduct._id.toString());
 
-			const updatedProduct = await productModel.findById(createdProduct._id);
+			const deletedProduct = await productModel.findById(createdProduct._id);
 
-			expect(updatedProduct).toBe(null);
+			expect(deletedProduct).toBe(null);
 		});
 	});
 
