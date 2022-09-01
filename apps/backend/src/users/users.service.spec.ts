@@ -127,4 +127,89 @@ describe('UsersService', () => {
 			expect(deletedUser).toBe(null);
 		});
 	});
+
+	describe('depositAmount / BUYER', () => {
+		it("should deposit 250 into the user's balance", async () => {
+			// User has 105 balance initially
+			const withUser = UserDTOStub({
+				deposit: { 100: 1, 50: 0, 20: 0, 10: 0, 5: 1 },
+				role: RolesEnum.BUYER,
+			});
+
+			await new userModel({
+				...withUser,
+				password: 'test',
+			}).save();
+
+			await service.depositAmount(withUser, {
+				coins: { 100: 0, 50: 2, 20: 2, 10: 1, 5: 20 },
+			});
+			const updatedUser = await userModel.findById(withUser._id);
+
+			expect(updatedUser.deposit).toMatchObject({ 100: 1, 50: 2, 20: 2, 10: 1, 5: 21 });
+		});
+	});
+
+	describe('resetBalance / BUYER', () => {
+		it("should deposit 250 into the user's balance", async () => {
+			const withUser = UserDTOStub({
+				deposit: { 100: 3, 50: 10, 20: 20, 10: 0, 5: 1 },
+				role: RolesEnum.BUYER,
+			});
+
+			await new userModel({
+				...withUser,
+				password: 'test',
+			}).save();
+
+			await service.resetDeposit(withUser);
+			const updatedUser = await userModel.findById(withUser._id);
+
+			expect(updatedUser.deposit).toMatchObject({ 100: 0, 50: 0, 20: 0, 10: 0, 5: 0 });
+		});
+	});
+
+	describe('getSellerBalance / SELLER', () => {
+		it("should deposit 250 into the user's balance", async () => {
+			const withUser = UserDTOStub({
+				deposit: { 100: 0, 50: 0, 20: 0, 10: 0, 5: 0 },
+				role: RolesEnum.SELLER,
+			});
+
+			await Promise.all([
+				new userModel({
+					...withUser,
+					password: 'test',
+				}).save(),
+				new productModel({
+					sellerId: withUser._id,
+					productName: 'Fanta',
+					cost: 100,
+					amountAvailable: { 100: 1, 50: 1, 20: 2, 10: 0, 5: 9 },
+				}).save(),
+				new productModel({
+					sellerId: withUser._id,
+					productName: 'Cola',
+					cost: 100,
+					amountAvailable: { 100: 0, 50: 0, 20: 5, 10: 7, 5: 4 },
+				}).save(),
+				new productModel({
+					sellerId: new mongoose.Types.ObjectId(),
+					productName: 'Gold',
+					cost: 100,
+					amountAvailable: { 100: 10, 50: 5, 20: 50, 10: 5, 5: 15 },
+				}).save(),
+				new productModel({
+					sellerId: withUser._id,
+					productName: 'Sprite',
+					cost: 100,
+					amountAvailable: { 100: 5, 50: 1, 20: 1, 10: 2, 5: 2 },
+				}).save(),
+			]);
+
+			const totalBalance = await service.getSellerTotalBalance(withUser);
+
+			expect(totalBalance).toMatchObject({ 100: 6, 50: 2, 20: 8, 10: 9, 5: 15 });
+		});
+	});
 });
