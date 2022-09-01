@@ -8,7 +8,7 @@
   "scripts": {
     "backend": "yarn workspace backend start:dev",
     "frontend": "yarn workspace frontend start",
-    "build:packages": "concurrently \"yarn workspace @vending/types build\" \"yarn workspace @vending/utils build\"",
+    "build:packages": "yarn workspace @vending/types build && yarn workspace @vending/utils build",
     "start": "yarn build:packages && concurrently --kill-others-on-fail \"yarn backend\"  \"yarn frontend\""
   },
   "engines": {
