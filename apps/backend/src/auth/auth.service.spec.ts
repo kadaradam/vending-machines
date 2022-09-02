@@ -12,7 +12,6 @@ import { AuthService } from './auth.service';
 const JWT_SECRET = 'example';
 
 UserSchema.pre('save', async function (next) {
-	console.log('asd', this);
 	// eslint-disable-next-line @typescript-eslint/no-this-alias
 	const user = this;
 
