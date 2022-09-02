@@ -4,23 +4,9 @@ import { RolesEnum } from '@vending/types/src';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import mongoose, { connect, Connection, Model } from 'mongoose';
 import { Product, ProductSchema } from 'src/products/products.schema';
-import { CleanUser, User, UserSchema } from 'src/users/user.schema';
+import { User, UserSchema } from 'src/users/user.schema';
+import { UserDTOStub } from 'test/stubs';
 import { UsersService } from './users.service';
-
-const UserDTOStub = (
-	{ deposit, role }: Pick<CleanUser, 'deposit' | 'role'> = {
-		deposit: { 100: 0, 50: 0, 20: 0, 10: 0, 5: 0 },
-		role: RolesEnum.BUYER,
-	},
-): CleanUser => {
-	return {
-		session: '-',
-		_id: new mongoose.Types.ObjectId('630bd1f86d320d062f172244'),
-		deposit,
-		role,
-		username: 'John Doe',
-	};
-};
 
 describe('UsersService', () => {
 	let service: UsersService;

@@ -1,51 +1,17 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
 import { getModelToken } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CoinWalletType, RolesEnum } from '@vending/types/src';
+import { CoinWalletType } from '@vending/types/src';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import mongoose, { connect, Connection, Model } from 'mongoose';
-import { CleanUser, User, UserSchema } from 'src/users/user.schema';
+import { connect, Connection, Model } from 'mongoose';
+import { User, UserSchema } from 'src/users/user.schema';
+import {
+	NoChangeInMachineException,
+	NonExistentCoinsException,
+	ProductAlreadyExistsException,
+} from 'test/exceptions';
+import { ProductDTOStub, UserDTOStub } from 'test/stubs';
 import { Product, ProductSchema } from './products.schema';
 import { ProductsService } from './products.service';
-
-const CleanUserDTOStub = (
-	{ deposit }: Pick<CleanUser, 'deposit'> = { deposit: { 100: 0, 50: 0, 20: 0, 10: 0, 5: 0 } },
-): CleanUser => {
-	return {
-		session: '-',
-		_id: new mongoose.Types.ObjectId('630bd1f86d320d062f172244'),
-		deposit: deposit,
-		role: RolesEnum.BUYER,
-		username: 'John Doe',
-	};
-};
-
-const CreateProductDTOStub = (
-	{ cost }: Pick<Product, 'cost'> = { cost: 200 },
-): Pick<Product, 'productName' | 'cost'> => {
-	return {
-		cost,
-		productName: 'Cola',
-	};
-};
-
-class ProductAlreadyExists extends HttpException {
-	constructor() {
-		super('Product already exists', HttpStatus.CONFLICT);
-	}
-}
-
-class NoChangeInMachine extends HttpException {
-	constructor() {
-		super('Not enough changes in the machine', HttpStatus.CONFLICT);
-	}
-}
-
-class NonExistentCoins extends HttpException {
-	constructor() {
-		super('Coins does not exists', HttpStatus.CONFLICT);
-	}
-}
 
 describe('ProductsService', () => {
 	let service: ProductsService;
@@ -98,8 +64,8 @@ describe('ProductsService', () => {
 
 	describe('addProduct', () => {
 		it('should create new product', async () => {
-			const withUser = CleanUserDTOStub();
-			const toCreateProduct = CreateProductDTOStub();
+			const withUser = UserDTOStub();
+			const toCreateProduct = ProductDTOStub();
 			const product = await service.create(withUser, toCreateProduct);
 
 			expect(product.productName).toBe(toCreateProduct.productName);
@@ -108,21 +74,21 @@ describe('ProductsService', () => {
 		});
 
 		it('should create new product and throw exist error', async () => {
-			const withUser = CleanUserDTOStub();
-			const toCreateProduct = CreateProductDTOStub();
+			const withUser = UserDTOStub();
+			const toCreateProduct = ProductDTOStub();
 
 			await new productModel({ ...toCreateProduct, sellerId: withUser._id }).save();
 
 			await expect(service.create(withUser, toCreateProduct)).rejects.toThrow(
-				new ProductAlreadyExists(),
+				new ProductAlreadyExistsException(),
 			);
 		});
 	});
 
 	describe('getProduct', () => {
 		it('should get created product', async () => {
-			const withUser = CleanUserDTOStub();
-			const toGetProduct = CreateProductDTOStub();
+			const withUser = UserDTOStub();
+			const toGetProduct = ProductDTOStub();
 			const createdProduct = await new productModel({
 				...toGetProduct,
 				sellerId: withUser._id,
@@ -132,11 +98,11 @@ describe('ProductsService', () => {
 
 			expect(product.productName).toBe(toGetProduct.productName);
 			expect(product.cost).toBe(toGetProduct.cost);
-			expect(product.sellerId.toString()).toBe(withUser._id.toString());
+			expect(product.sellerId).toStrictEqual(withUser._id);
 		});
 
 		it('should get a not existing product', async () => {
-			const withUser = CleanUserDTOStub();
+			const withUser = UserDTOStub();
 
 			const product = await service.findOne(withUser, '630be4a3ec6c4cf54a04c894');
 
@@ -146,8 +112,8 @@ describe('ProductsService', () => {
 
 	describe('updateProduct', () => {
 		it('should update a product', async () => {
-			const withUser = CleanUserDTOStub();
-			const toGetProduct = CreateProductDTOStub();
+			const withUser = UserDTOStub();
+			const toGetProduct = ProductDTOStub();
 			const createdProduct = await new productModel({
 				...toGetProduct,
 				sellerId: withUser._id,
@@ -167,8 +133,8 @@ describe('ProductsService', () => {
 
 	describe('deleteProduct', () => {
 		it('should delete a product', async () => {
-			const withUser = CleanUserDTOStub();
-			const toGetProduct = CreateProductDTOStub();
+			const withUser = UserDTOStub();
+			const toGetProduct = ProductDTOStub();
 			const createdProduct = await new productModel({
 				...toGetProduct,
 				sellerId: withUser._id,
@@ -184,8 +150,8 @@ describe('ProductsService', () => {
 
 	describe('buyProduct', () => {
 		it('should successfully buy a product with no change', async () => {
-			const withUser = CleanUserDTOStub({ deposit: { 100: 1, 50: 2, 20: 0, 10: 0, 5: 0 } });
-			const toGetProduct = CreateProductDTOStub();
+			const withUser = UserDTOStub({ deposit: { 100: 1, 50: 2, 20: 0, 10: 0, 5: 0 } });
+			const toGetProduct = ProductDTOStub();
 
 			await new userModel({ ...withUser, password: 'test' }).save();
 			const createdProduct = await new productModel({
@@ -221,8 +187,8 @@ describe('ProductsService', () => {
 
 		it('should successfully buy a product with 100 change back (user overpaid)', async () => {
 			// Initially user has 450 balance
-			const withUser = CleanUserDTOStub({ deposit: { 100: 2, 50: 2, 20: 2, 10: 1, 5: 20 } });
-			const toGetProduct = CreateProductDTOStub();
+			const withUser = UserDTOStub({ deposit: { 100: 2, 50: 2, 20: 2, 10: 1, 5: 20 } });
+			const toGetProduct = ProductDTOStub();
 			const quantityToBuy = 1;
 
 			await new userModel({ ...withUser, password: 'test' }).save();
@@ -254,8 +220,8 @@ describe('ProductsService', () => {
 
 		it('should successfully buy a product with 100 change back (from sellers balance)', async () => {
 			// Initially user has 350 balance
-			const withUser = CleanUserDTOStub({ deposit: { 100: 3, 50: 1, 20: 0, 10: 0, 5: 0 } });
-			const toGetProduct = CreateProductDTOStub({ cost: 250 });
+			const withUser = UserDTOStub({ deposit: { 100: 3, 50: 1, 20: 0, 10: 0, 5: 0 } });
+			const toGetProduct = ProductDTOStub({ cost: 250 });
 			const quantityToBuy = 1;
 
 			// Initially seller has 65 balance
@@ -289,8 +255,8 @@ describe('ProductsService', () => {
 
 		it('should throw error when buy a product: no changes in the machine', async () => {
 			// Initially user has 350 balance
-			const withUser = CleanUserDTOStub({ deposit: { 100: 3, 50: 1, 20: 0, 10: 0, 5: 0 } });
-			const toGetProduct = CreateProductDTOStub({ cost: 250 });
+			const withUser = UserDTOStub({ deposit: { 100: 3, 50: 1, 20: 0, 10: 0, 5: 0 } });
+			const toGetProduct = ProductDTOStub({ cost: 250 });
 			const quantityToBuy = 1;
 
 			await new userModel({ ...withUser, password: 'test' }).save();
@@ -305,13 +271,13 @@ describe('ProductsService', () => {
 					coins: { 100: 3, 50: 0, 20: 0, 10: 0, 5: 0 },
 					quantity: quantityToBuy,
 				}),
-			).rejects.toThrow(new NoChangeInMachine());
+			).rejects.toThrow(new NoChangeInMachineException());
 		});
 
 		it('should throw error when buy a product: coins are not in users wallet', async () => {
 			// Initially user has 450 balance
-			const withUser = CleanUserDTOStub({ deposit: { 100: 0, 50: 6, 20: 2, 10: 1, 5: 20 } });
-			const toGetProduct = CreateProductDTOStub();
+			const withUser = UserDTOStub({ deposit: { 100: 0, 50: 6, 20: 2, 10: 1, 5: 20 } });
+			const toGetProduct = ProductDTOStub();
 			const quantityToBuy = 1;
 
 			await new userModel({ ...withUser, password: 'test' }).save();
@@ -326,7 +292,7 @@ describe('ProductsService', () => {
 					coins: { 100: 1, 50: 1, 20: 2, 10: 1, 5: 10 },
 					quantity: quantityToBuy,
 				}),
-			).rejects.toThrow(new NonExistentCoins());
+			).rejects.toThrow(new NonExistentCoinsException());
 		});
 	});
 });
