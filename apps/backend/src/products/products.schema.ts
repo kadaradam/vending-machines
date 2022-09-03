@@ -14,7 +14,7 @@ export class Product {
 	@Prop({ required: true })
 	productName: string;
 
-	@Prop({ type: CoinWalletSchemaType, default: new Wallet() })
+	@Prop({ type: CoinWalletSchemaType, default: new Wallet().getBalanceInCoins() })
 	amountAvailable: CoinWalletSchemaType;
 
 	@Prop({ default: 0 })

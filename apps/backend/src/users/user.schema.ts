@@ -14,7 +14,7 @@ export class User {
 	@Prop({ required: true, select: false })
 	password: string;
 
-	@Prop({ type: CoinWalletSchemaType, default: new Wallet() })
+	@Prop({ type: CoinWalletSchemaType, default: new Wallet().getBalanceInCoins() })
 	deposit: CoinWalletSchemaType;
 
 	@Prop({ enum: Object.values(RolesEnum), default: RolesEnum.BUYER })
