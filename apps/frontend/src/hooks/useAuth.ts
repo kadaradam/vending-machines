@@ -16,7 +16,7 @@ export function useAuth() {
 
     toast.success("Registered Successfully");
 
-    setUserLoggedIn(true);
+    setUserLoggedIn(false);
     navigate("/login", { replace: true });
   }
 
