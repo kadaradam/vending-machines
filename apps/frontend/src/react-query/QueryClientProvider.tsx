@@ -31,8 +31,11 @@ const handleError = (error: unknown) => {
       return;
     }
 
+    // Use error codes in the future
     if (
-      errorMessage === "There is already an active session using your account"
+      errorMessage ===
+        "There is already an active session using your account" ||
+      errorMessage === "User not found"
     ) {
       // logout user
       window.localStorage.removeItem(STORAGE_AUTH_TOKEN_KEY);
