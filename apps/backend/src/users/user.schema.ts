@@ -20,7 +20,7 @@ export class User {
 	@Prop({ enum: Object.values(RolesEnum), default: RolesEnum.BUYER })
 	role: RolesEnum;
 
-	@Prop()
+	@Prop({ select: false })
 	session: string;
 }
 
