@@ -1,0 +1,9 @@
+PUT http://localhost:3001/users/buyer/deposit
+Content-Type: application/json
+Authorization: Bearer {{auth-token}}
+
+{ 
+    "coins": {
+        "50": 1
+    }
+}

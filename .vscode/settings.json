@@ -6,5 +6,10 @@
   },
   "[javascript, typescript, typescriptreact, javascriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "rest-client.environmentVariables": {
+    "$shared": {
+      "auth-token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImthZGFyYWRhbSIsInN1YiI6IjYzMTM4M2FlMTAxODU1MWRkMGY3ODdiYSIsInNlc3Npb24iOiJyOHl5ODV5cWpsZiIsImlhdCI6MTY2MjM2NTA0MCwiZXhwIjoxNjYyOTY5ODQwfQ.OfjvKXBm6hp4c6P5eFUf46hk1qLm8P_q14scZkI2cw0"
+    }
   }
 }

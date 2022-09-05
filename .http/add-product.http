@@ -1,0 +1,8 @@
+POST http://localhost:3001/products
+Content-Type: application/json
+Authorization: Bearer {{auth-token}}
+
+{ 
+   "productName": "Fanta",
+   "cost": 100
+}

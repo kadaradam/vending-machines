@@ -1,0 +1,8 @@
+PUT http://localhost:3001/products/6302131f0c68ac0afcd0c108
+Content-Type: application/json
+Authorization: Bearer {{auth-token}}
+
+{ 
+   "productName": "Cola",
+   "cost": 50
+}
