@@ -1,0 +1,13 @@
+POST http://localhost:3001/products/6302131f0c68ac0afcd0c108/buy
+Content-Type: application/json
+Authorization: Bearer {{auth-token}}
+
+{ 
+    "quantity": 2,
+    "coins": {
+        "50": 1,
+        "20": 1,
+        "10": 1,
+        "5": 5
+    }
+}

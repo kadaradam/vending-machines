@@ -1,0 +1,3 @@
+GET http://localhost:3001/users/seller/balance
+Content-Type: application/json
+Authorization: Bearer {{auth-token}}
